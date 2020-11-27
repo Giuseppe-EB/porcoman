@@ -30,6 +30,8 @@ public class Player extends Sprite {
 
     public Player() {
         super("stupid.png");
+        this.x = 0;
+        this.y = 580;
         can_hit = true;
         can_move = new boolean[]{true, true, true, true};
         count=0;

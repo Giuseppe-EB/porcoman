@@ -3,10 +3,7 @@ package com.mygdx.game.level;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class Level {
@@ -66,6 +63,12 @@ public class Level {
         }
         return matrix.get(i).get(j);
     }
+    public void setCell(int j, int i){
+        if(i<0||j<0||i>15||j>31) {
+            System.out.println("porcodio");
+        }
+        matrix.get(i).set(j, 1);
+    }
     public void draw(SpriteBatch batch) {
             //System.out.println("porcodio1");
             for (int col = 0; col < matrix.size(); col++) {
@@ -107,6 +110,20 @@ public class Level {
 
         matrix.get(i).set(j, 2);
 
+    }
+
+    public void save() throws IOException {
+
+        FileWriter file = new FileWriter("level_building.csv");
+        for (int col = 0; col < matrix.size(); col++) {
+            //System.out.println("porcodio");
+            for (int row = 0; row < matrix.get(col).size(); row++) {
+                int i = matrix.get(col).get(row);
+                    file.append(i + ";");
+            }
+            file.append("\n");
+        }
+        file.close();
     }
 }
 

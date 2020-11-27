@@ -71,7 +71,18 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		 */
 
-		input.convertInput();
+		/*input.convertInput();
+		if(Gdx.input.isTouched()){
+				level.setCell((int)input.x()/40,(int)input.y()/40);
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+			try {
+				level.save();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		level.draw(batch);*/
 		Player player = (Player)sprites.get(0);
 
 
@@ -93,6 +104,7 @@ public class MyGdxGame extends ApplicationAdapter {
 			}
 		//System.out.println("porcodio");
 		update(level, (Player)sprites.get(0));
+
 		batch.end();
 	}
 

@@ -10,6 +10,7 @@ public class Player extends Sprite {
 
     private int count ;
     private boolean can_hit ;
+    private boolean[] can_move ;
 
     public int getCount() {
         return count;
@@ -29,10 +30,31 @@ public class Player extends Sprite {
 
     public Player() {
         super("stupid.png");
-        can_hit=true;
+        can_hit = true;
+        can_move = new boolean[]{true, true, true, true};
         count=0;
     }
+    public void setCan_move(int i, boolean val){
 
+        can_move[i]=val;
+
+    }
+    public void set_allCan_move(int i, boolean val){
+
+        if(i<4) {
+            can_move[i] = val;
+            set_allCan_move(i + 1, val);
+        }
+    }
+/*
+
+        LEGEND:
+                0 LEFT
+                1 RIGHT
+                2 UP
+                3 DOWN
+
+ */
     @Override
     public void action() {
         if (!can_hit)
@@ -41,16 +63,22 @@ public class Player extends Sprite {
             can_hit = true;
             count = 0;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.A)&&can_move[0]) {
+            set_allCan_move(0, true);
             this.x -= 5;
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.D)&&can_move[1]) {
+            set_allCan_move(0, true);
             this.x += 5;
         }
-        if (Gdx.input.isKeyPressed((Input.Keys.W)))
+        if (Gdx.input.isKeyPressed((Input.Keys.W))&&can_move[2]) {
             this.y += 5;
-        if (Gdx.input.isKeyPressed((Input.Keys.S)))
+            set_allCan_move(0, true);
+        }
+        if (Gdx.input.isKeyPressed((Input.Keys.S))&&can_move[3]){
+            set_allCan_move(0, true);
             this.y -= 5;
+        }
         if (Gdx.input.isKeyPressed((Input.Keys.Z)) && can_hit) {
             can_hit = false;
         }

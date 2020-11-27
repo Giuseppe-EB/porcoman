@@ -19,6 +19,7 @@ public class Level {
     String current = new java.io.File( "." ).getCanonicalPath();
     private Texture texture = new Texture("wall.png");
 
+    private int bomb_count;
     boolean isdraw = false;
     //System.out.println("Current dir:" + current);
 
@@ -26,6 +27,7 @@ public class Level {
 
 
     public Level() throws IOException {
+        bomb_count = 0;
         matrix = new ArrayList<ArrayList<Integer>>();
         try {
             System.out.println("Current dir:" + current);
@@ -57,6 +59,13 @@ public class Level {
 
     }
 
+    public int getCell(int j, int i){
+        if(i<0||j<0||i>15||j>31) {
+            System.out.println("porcodio");
+            return 1;
+        }
+        return matrix.get(i).get(j);
+    }
     public void draw(SpriteBatch batch) {
             //System.out.println("porcodio1");
             for (int col = 0; col < matrix.size(); col++) {
@@ -66,9 +75,37 @@ public class Level {
                     if (i == 1) {
                         batch.draw(texture, row * 40, col * 40);
                     }
+                    else if(i == 2&&bomb_count<100) {
+                        bomb_count++;
+                    }
+                    else if(i == 2 ){
+                        bomb_count = 0;
+                        explosion(col, row);
+                    }
                 }
             }
 
+
+    }
+
+    private void explosion(int i,int j) {
+        if(i>0)
+            matrix.get(i-1).set(j, 0);
+        if(i<15)
+            matrix.get(i+1).set(j, 0);
+        if(j>0)
+            matrix.get(i).set(j-1, 0);
+        if(j<31)
+            matrix.get(i).set(j+1, 0);
+        matrix.get(i).set(j, 0);
+    }
+
+    /*
+            2 =======> BOMB
+     */
+    public void add_bomb(int j, int i) {
+
+        matrix.get(i).set(j, 2);
 
     }
 }

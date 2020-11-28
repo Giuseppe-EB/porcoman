@@ -111,22 +111,25 @@ public class MyGdxGame extends ApplicationAdapter {
 	private void update(Level level, Player player){
 
 		if(level.getCell((player.getX()/40)+1, player.getY()/40) != 0){
-			System.out.println("bloccato da destra");
+			//System.out.println("bloccato da destra");
 				player.setCan_move(1, false);
 		}
 		if(level.getCell((player.getX()/40)-1, player.getY()/40) != 0){
-			System.out.println("bloccato da sinistra");
+			//System.out.println("bloccato da sinistra");
 				player.setCan_move(0, false);
 		}
 		if(level.getCell((player.getX()/40), (player.getY()/40) + 1) != 0){
 			player.setCan_move(2, false);
-			System.out.println("bloccato da su");
+			//System.out.println("bloccato da su");
 		}
 		if(level.getCell((player.getX()/40), (player.getY()/40) - 1 )!= 0){
 			player.setCan_move(3, false);
-			System.out.println("bloccato da giu");
+			//System.out.println("bloccato da giu");
 		}
+		if(level.getCell((player.getX()/40)+1, (player.getY()/40) )== 3){
 
+			System.out.println("prossimo livello");
+		}
 
 	}
 	@Override

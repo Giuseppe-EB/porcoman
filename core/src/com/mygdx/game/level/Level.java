@@ -15,6 +15,7 @@ public class Level {
     String cvsSplitBy = ";";
     String current = new java.io.File( "." ).getCanonicalPath();
     private Texture texture = new Texture("wall.png");
+    private Texture porta= new Texture("porta.png");
 
     private int bomb_count;
     boolean isdraw = false;
@@ -78,6 +79,10 @@ public class Level {
                     if (i == 1) {
                         batch.draw(texture, row * 40, col * 40);
                     }
+                    if(i==3)
+                    {
+                        batch.draw(porta,row*40,col*40);
+                    }
                     else if(i == 2&&bomb_count<100) {
                         bomb_count++;
                     }
@@ -125,5 +130,6 @@ public class Level {
         }
         file.close();
     }
+
 }
 

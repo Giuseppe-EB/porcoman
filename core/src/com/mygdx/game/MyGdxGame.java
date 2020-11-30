@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.game.level.Level;
 import com.mygdx.game.sprite.Bomb;
+import com.mygdx.game.sprite.Nemico;
 import com.mygdx.game.sprite.Player;
 import com.mygdx.game.sprite.Sprite;
 import org.graalvm.compiler.phases.common.NodeCounterPhase;
@@ -22,6 +23,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
 	Texture porcodio;
+
+	private boolean start=false;
 	public static int height = 640;
 	public static int width = 1280;
 	private OrthographicCamera cam;
@@ -34,19 +37,16 @@ public class MyGdxGame extends ApplicationAdapter {
 	@Override
 	public void create () {
 		sprites = new ArrayList<>();
-		try {
-			level = new Level();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		level = Level.getInstance();
 		this.cam = new OrthographicCamera();
 		this.input = new MouseInput(cam);
 		sprites.add(new Player());
+		sprites.add(new Nemico());
 		cam.setToOrtho(false, this.width, this.height);
 		this.view = new StretchViewport(this.width, this.height);
 		this.stage = new Stage(view);
 		batch = new SpriteBatch();
-		img = new Texture("the-witcher-3-caccia-selvaggia-geralt-e-ciri-sfondo-1920x1080-21727_48.jpg");
+		img = new Texture("sfondo.png");
 		porcodio = new Texture("stupid.png");
 	}
 
@@ -83,52 +83,66 @@ public class MyGdxGame extends ApplicationAdapter {
 			}
 		}
 		level.draw(batch);*/
-		Player player = (Player)sprites.get(0);
+		if(start) {
+			Player player = (Player) sprites.get(0);
 
 
 			level.draw(batch);
 
 
-
-			if (Gdx.input.isKeyPressed((Input.Keys.Z))&& player.isCan_hit()) {
+			if (Gdx.input.isKeyPressed((Input.Keys.Z)) && player.isCan_hit()) {
 				sprites.add(new Bomb(player.getX(), player.getY()));
-				level.add_bomb(player.getX()/40, player.getY()/40);
-		}
-		//batch.draw(player.getTexture(), player.getX(), player.getY());
-			for ( Sprite sprite : sprites ){
-				if(sprite.isAlive()) {
+				level.add_bomb(player.getX() / 40, player.getY() / 40);
+			}
+			//batch.draw(player.getTexture(), player.getX(), player.getY());
+			for (Sprite sprite : sprites) {
+				if (sprite.isAlive()) {
+					sprite.draw(batch);
 					sprite.action();
-					batch.draw(sprite.getTexture(), sprite.getX(), sprite.getY());
+
+					//batch.draw(sprite.getTexture(), sprite.getX(), sprite.getY());
+					sprite.update(level);
+					sprite.update_hitbox();
+					if(sprite.getClass() == Player.class) {
+						sprite.collision(sprites.get(1).getHitbox());
+					}
+					else if(sprite.getClass() == Bomb.class){
+						sprite.collision(sprites.get(0).getHitbox());
+					}
+
 				}
 
 			}
-		//System.out.println("porcodio");
-		update(level, (Player)sprites.get(0));
-
+			//System.out.println("porcodio");
+			//update(level, (Player)sprites.get(0));
+		}
+		if(!start && (Gdx.input.isTouched()))
+			start=true;
 		batch.end();
 	}
 
 	private void update(Level level, Player player){
 
-		if(level.getCell((player.getX()/40)+1, player.getY()/40) != 0){
+		if(level.getCell((player.getX()/40)+1, player.getY()/40)%10 != 0){
 			//System.out.println("bloccato da destra");
 				player.setCan_move(1, false);
 		}
-		if(level.getCell((player.getX()/40)-1, player.getY()/40) != 0){
+		if(level.getCell((player.getX()/40)-1, player.getY()/40)%10 != 0){
 			//System.out.println("bloccato da sinistra");
 				player.setCan_move(0, false);
 		}
-		if(level.getCell((player.getX()/40), (player.getY()/40) + 1) != 0){
+		if(level.getCell((player.getX()/40), (player.getY()/40) + 1)%10 != 0){
 			player.setCan_move(2, false);
 			//System.out.println("bloccato da su");
 		}
-		if(level.getCell((player.getX()/40), (player.getY()/40) - 1 )!= 0){
+		if(level.getCell((player.getX()/40), (player.getY()/40) - 1 )%10!= 0){
 			player.setCan_move(3, false);
 			//System.out.println("bloccato da giu");
 		}
-		if(level.getCell((player.getX()/40)+1, (player.getY()/40) )== 3){
+		if(level.getCell((player.getX()/40), (player.getY()/40) ) == 10){
 
 			System.out.println("prossimo livello");
+			level.setCsvFile("level2.csv");
 		}
 
 	}

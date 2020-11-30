@@ -9,14 +9,24 @@ import java.util.ArrayList;
 public class Level {
     String csvFile = new String("level.csv");
 
+    public String getCsvFile() {
+        return csvFile;
+    }
 
+    public void setCsvFile(String csvFile) {
+        switch_level = true;
+        this.csvFile = csvFile;
+    }
+
+    private boolean switch_level = true;
     BufferedReader br = null;
     String line = "";
     String cvsSplitBy = ";";
-    String current = new java.io.File( "." ).getCanonicalPath();
     private Texture texture = new Texture("wall.png");
     private Texture porta= new Texture("porta.png");
 
+
+    private static Level level;
     private int bomb_count;
     boolean isdraw = false;
     //System.out.println("Current dir:" + current);
@@ -24,11 +34,18 @@ public class Level {
     private ArrayList<ArrayList<Integer>> matrix ;
 
 
-    public Level() throws IOException {
+    private Level() {
         bomb_count = 0;
         matrix = new ArrayList<ArrayList<Integer>>();
+    }
+    public static Level getInstance(){
+        return new Level();
+    }
+    private void loadLevel(){
         try {
-            System.out.println("Current dir:" + current);
+            System.out.println(csvFile);
+            matrix.clear();
+            //matrix = new ArrayList<ArrayList<Integer>>();
             br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
                 ArrayList<Integer> row = new ArrayList<Integer>();
@@ -37,7 +54,7 @@ public class Level {
                 for (String s : country){
                     row.add(Integer.parseInt(s));
                 }
-                System.out.println("Country [code= " + country[4] + " , name=" + country[5] + "]");
+                //System.out.println("Country [code= " + country[4] + " , name=" + country[5] + "]");
                 matrix.add(row);
             }
 
@@ -59,19 +76,24 @@ public class Level {
 
     public int getCell(int j, int i){
         if(i<0||j<0||i>15||j>31) {
-            System.out.println("porcodio");
+            //System.out.println("porcodio");
             return 1;
         }
         return matrix.get(i).get(j);
     }
     public void setCell(int j, int i){
-        if(i<0||j<0||i>15||j>31) {
+        /*if(i<0||j<0||i>15||j>31) {
             System.out.println("porcodio");
-        }
+        }*/
         matrix.get(i).set(j, 1);
     }
     public void draw(SpriteBatch batch) {
             //System.out.println("porcodio1");
+            if(switch_level) {
+                System.out.println("switch level....");
+                this.loadLevel();
+                switch_level = false;
+            }
             for (int col = 0; col < matrix.size(); col++) {
                 //System.out.println("porcodio");
                 for (int row = 0; row < matrix.get(col).size(); row++) {
@@ -79,16 +101,16 @@ public class Level {
                     if (i == 1) {
                         batch.draw(texture, row * 40, col * 40);
                     }
-                    if(i==3)
-                    {
-                        batch.draw(porta,row*40,col*40);
-                    }
-                    else if(i == 2&&bomb_count<100) {
+                    else if( i == 2 && bomb_count<100) {
                         bomb_count++;
                     }
-                    else if(i == 2 ){
+                    else if( i == 2 ){
                         bomb_count = 0;
                         explosion(col, row);
+                    }
+                    else if(i == 10)
+                    {
+                        batch.draw(porta,row*40,col*40);
                     }
                 }
             }

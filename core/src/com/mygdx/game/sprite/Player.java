@@ -3,6 +3,7 @@ package com.mygdx.game.sprite;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.level.Level;
 
 import java.util.ArrayList;
 
@@ -10,7 +11,7 @@ public class Player extends Sprite {
 
     private int count ;
     private boolean can_hit ;
-    private boolean[] can_move ;
+    //private boolean[] can_move ;
 
     public int getCount() {
         return count;
@@ -33,30 +34,27 @@ public class Player extends Sprite {
         this.x = 0;
         this.y = 580;
         can_hit = true;
-        can_move = new boolean[]{true, true, true, true};
         count=0;
     }
-    public void setCan_move(int i, boolean val){
+    @Override
+    public void update(Level level) {
+        super.update(level);
+        if(level.getCell((getX()/40), (getY()/40) ) == 10){
 
-        can_move[i]=val;
-
-    }
-    public void set_allCan_move(int i, boolean val){
-
-        if(i<4) {
-            can_move[i] = val;
-            set_allCan_move(i + 1, val);
+            System.out.println("prossimo livello");
+            level.setCsvFile("level2.csv");
         }
     }
-/*
 
-        LEGEND:
-                0 LEFT
-                1 RIGHT
-                2 UP
-                3 DOWN
+    /*
 
- */
+            LEGEND:
+                    0 LEFT
+                    1 RIGHT
+                    2 UP
+                    3 DOWN
+
+     */
     @Override
     public void action() {
         if (!can_hit)
@@ -84,10 +82,15 @@ public class Player extends Sprite {
         if (Gdx.input.isKeyPressed((Input.Keys.Z)) && can_hit) {
             can_hit = false;
         }
+
     }
 
     @Override
     public void draw(SpriteBatch batch) {
-        batch.draw(this.texture, this.x, this.y);
+            int x = this.x/40;
+            int y = this.y/40;
+            x*=40;
+            y*=40;
+            batch.draw(this.texture, x, y);
     }
 }

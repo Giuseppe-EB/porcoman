@@ -1,0 +1,33 @@
+%move(0..3).
+move(1).
+move(3).
+position(0, 1).
+end(18, 8).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%LEGEND:
+%                    0 LEFT
+%                    1 RIGHT
+%                    2 UP
+%                    3 DOWN
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+choice(M)|not_choice(M):- move(M).
+:- #count{M:choice(M)}<1.
+
+
+:- move(0), muro(X, Y), position(X-1, Y).
+:- move(1), muro(X, Y), position(X+1, Y).
+:- move(2), muro(X, Y), position(X, Y+1).
+:- move(3), muro(X, Y), position(X, Y-1).
+
+% distanza tra due punti : d( P1, P2) = sqrt((x2 - x1)^2+(y2-y1)^2)
+
+% d((1,1),(18,8))= sqrt 289 + 49 = 18
+% d((0, 2)), (18, 8))= sqrt 324 + 36 = 19
+
+d(1, 18).
+d(3, 19).
+
+:~ d(X, Y), choice(X). [Y @ 1]
+

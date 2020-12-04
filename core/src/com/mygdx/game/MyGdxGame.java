@@ -14,7 +14,6 @@ import com.mygdx.game.sprite.Bomb;
 import com.mygdx.game.sprite.Nemico;
 import com.mygdx.game.sprite.Player;
 import com.mygdx.game.sprite.Sprite;
-import org.graalvm.compiler.phases.common.NodeCounterPhase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,7 +39,11 @@ public class MyGdxGame extends ApplicationAdapter {
 		level = Level.getInstance();
 		this.cam = new OrthographicCamera();
 		this.input = new MouseInput(cam);
-		sprites.add(new Player());
+		try {
+			sprites.add(new Player());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		sprites.add(new Nemico());
 		cam.setToOrtho(false, this.width, this.height);
 		this.view = new StretchViewport(this.width, this.height);
@@ -98,7 +101,11 @@ public class MyGdxGame extends ApplicationAdapter {
 			for (Sprite sprite : sprites) {
 				if (sprite.isAlive()) {
 					sprite.draw(batch);
-					sprite.action();
+					try {
+						sprite.action();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 
 					//batch.draw(sprite.getTexture(), sprite.getX(), sprite.getY());
 					sprite.update(level);

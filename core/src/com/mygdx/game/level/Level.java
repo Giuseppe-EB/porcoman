@@ -111,6 +111,7 @@ public class Level {
                     else if(i == 10)
                     {
                         batch.draw(porta,row*40,col*40);
+                        //System.out.println(row + "   " + col);
                     }
                 }
             }

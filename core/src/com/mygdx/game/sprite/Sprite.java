@@ -33,7 +33,7 @@ public abstract class Sprite {
         this.texture = new Texture(path);
         hitbox = new Hitbox(0,0);
     }
-    public abstract void action();
+    public abstract void action() throws Exception;
     public abstract void draw(SpriteBatch batch);
 
     public boolean isAlive(){

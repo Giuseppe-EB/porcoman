@@ -1,2 +1,2 @@
-# porcoman
-classic bomberman revisitation with AI
+# Poker-IA-Unical
+A project for the AI course of University of Calabria

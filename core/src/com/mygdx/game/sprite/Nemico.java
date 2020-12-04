@@ -1,16 +1,20 @@
 package com.mygdx.game.sprite;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Nemico extends Sprite {
 
     private int direction;
+    private int right =0;
+    private Texture texture_2;
 
     public Nemico() {
         super("nemico_queg.png");
         x = 400;
         y = 400;
         direction = 0;
+        texture_2 = new Texture("nemico_queg2.png");
 
     }
 
@@ -66,12 +70,25 @@ public class Nemico extends Sprite {
 
         //return direction;
     }
+
     @Override
     public void draw(SpriteBatch batch) {
         int x = this.x/40;
         int y = this.y/40;
         x*=40;
         y*=40;
-        batch.draw(this.texture, x, y);
+        if(right < 25) {
+            right++;
+            batch.draw(this.texture, x, y);
+
+        }
+        else if(right < 50){
+            right++;
+            batch.draw(this.texture_2, x, y);
+            if(right==50)
+                right=0;
+
+        }
+
     }
 }

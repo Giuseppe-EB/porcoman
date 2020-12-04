@@ -93,7 +93,7 @@ public class MyGdxGame extends ApplicationAdapter {
 			level.draw(batch);
 
 
-			if (Gdx.input.isKeyPressed((Input.Keys.Z)) && player.isCan_hit()) {
+			if (player.isAi_hit()||Gdx.input.isKeyPressed((Input.Keys.Z)) && player.isCan_hit()) {
 				sprites.add(new Bomb(player.getX(), player.getY()));
 				level.add_bomb(player.getX() / 40, player.getY() / 40);
 			}

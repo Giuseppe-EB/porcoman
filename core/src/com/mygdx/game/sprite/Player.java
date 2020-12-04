@@ -3,10 +3,7 @@ package com.mygdx.game.sprite;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.mygdx.game.ai.Action;
-import com.mygdx.game.ai.Distance;
-import com.mygdx.game.ai.PlayerAI;
-import com.mygdx.game.ai.Position;
+import com.mygdx.game.ai.*;
 import com.mygdx.game.level.Level;
 import it.unical.mat.embasp.languages.asp.AnswerSet;
 import it.unical.mat.embasp.languages.asp.AnswerSets;
@@ -27,6 +24,22 @@ public class Player extends Sprite {
     private PlayerAI ai;
     private int P2_x = 18;
     private int P2_y = 8;
+    private int Pb_x;
+    private int Pb_y;
+    private boolean go_ia =false;
+    private int ia_count = 0;
+
+    public boolean isAi_hit() {
+        boolean temp = ai_hit;
+        ai_hit = false;
+        return temp;
+    }
+
+    public void setAi_hit(boolean ai_hit) {
+        this.ai_hit = ai_hit;
+    }
+
+    private boolean ai_hit = false;
     //private boolean[] can_move ;
 
     public int getCount() {
@@ -77,16 +90,25 @@ public class Player extends Sprite {
     public void action() throws Exception {
         if (!can_hit)
             count++;
-        if (count == 80) {
+        if (count == 100) {
             can_hit = true;
             count = 0;
         }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+            go_ia=!go_ia;
+        }
+        if(go_ia){
+            ia_count++;
+            if(ia_count==11)
+                ia_count=0;
+        }
+        if(go_ia&&ia_count==10) {
             int move = 0;
             boolean trovato= false;
             ArrayList<Action> actions = new ArrayList<>();
             ArrayList<Distance> dists = new ArrayList<>();
-
+            ArrayList<BombDistance> bomb_dists = new ArrayList<>();
 
 //          distanza tra due punti : d( P1, P2) = sqrt((x2 - x1)^2+(y2-y1)^2)
 
@@ -96,22 +118,47 @@ public class Player extends Sprite {
 
             if(can_move[0]) {
                 actions.add(new Action(0));
-                dists.add(new Distance(0, (int) round(sqrt(pow(((P1_x-1) - P2_x), 2)+pow((P1_y - P2_y), 2)))));
+                dists.add(new Distance(0, (int) round(10*sqrt(pow(((P1_x-1) - P2_x), 2)+pow((P1_y - P2_y), 2)))));
+                if(!can_hit){
+                    bomb_dists.add(new BombDistance(0, (int) round(10*sqrt(pow(((P1_x-1) - Pb_x), 2)+pow((P1_y - Pb_y), 2)))));
+
+                }
             }
             if(can_move[1]) {
                 actions.add(new Action(1));
-                dists.add(new Distance(1, (int) round(sqrt(pow(((P1_x+1) - P2_x), 2)+pow((P1_y - P2_y), 2)))));
+                dists.add(new Distance(1, (int) round(10*sqrt(pow(((P1_x+1) - P2_x), 2)+pow((P1_y - P2_y), 2)))));
+                if(!can_hit) {
+                    bomb_dists.add(new BombDistance(1, (int) round(10 * sqrt(pow(((P1_x + 1) - Pb_x), 2) + pow((P1_y - Pb_y), 2)))));
+                }
             }
             if(can_move[2]) {
                 actions.add(new Action(2));
-                dists.add(new Distance(2, (int) round(sqrt(pow((P1_x - P2_x), 2)+pow(((P1_y+1) - P2_y), 2)))));
+                dists.add(new Distance(2, (int) round(10*sqrt(pow((P1_x - P2_x), 2)+pow(((P1_y+1) - P2_y), 2)))));
+                if(!can_hit) {
+                    bomb_dists.add(new BombDistance(2, (int) round(10*sqrt(pow((P1_x - Pb_x), 2)+pow(((P1_y+1) - Pb_y), 2)))));
+
+                }
             }
             if(can_move[3]) {
                 actions.add(new Action(3));
-                dists.add(new Distance(3, (int) round(sqrt(pow((P1_x - P2_x), 2)+pow(((P1_y-1) - P2_y), 2)))));
-            }
+                dists.add(new Distance(3, (int) round(10*sqrt(pow((P1_x - P2_x), 2)+pow(((P1_y-1) - P2_y), 2)))));
+                if(!can_hit){
+                    bomb_dists.add(new BombDistance(3, (int) round(10*sqrt(pow((P1_x - Pb_x), 2)+pow(((P1_y-1) - Pb_y), 2)))));
 
-            ai.load_fact(new Position(P1_x, P1_y),actions, dists);
+                }
+            }
+            if(can_hit){
+                actions.add(new Action(4));
+
+            }
+            else {
+                actions.add(new Action(4));
+                bomb_dists.add(new BombDistance(4, (int) round(10*sqrt(pow((P1_x - Pb_x), 2)+pow((P1_y - Pb_y), 2)))));
+
+            }
+            dists.add(new Distance(4, (int) round(10*sqrt(pow((P1_x - P2_x), 2)+pow((P1_y - P2_y), 2)))));
+
+            ai.load_fact(new Position(P1_x, P1_y),actions, dists, bomb_dists);
             AnswerSets answers = ai.getAnswerSets();
             for (AnswerSet an : answers.getAnswersets()) {
                 Pattern pattern = Pattern.compile("^choice\\((\\d+)\\)");
@@ -144,7 +191,15 @@ public class Player extends Sprite {
                 set_allCan_move(0, true);
                 this.x -= 40;
             }
+            if (move == 4 && can_hit) {
+                ai_hit = true;
+                can_hit = false;
+                this.Pb_x=P1_x;
+                this.Pb_y=P1_y;
+            }
+            ai.clear();
         }
+
         if (Gdx.input.isKeyPressed(Input.Keys.A)&&can_move[0]) {
             set_allCan_move(0, true);
             this.x -= 5;

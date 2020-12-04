@@ -87,6 +87,7 @@ public abstract class Sprite {
         }
 
     }
+    public abstract void update(int x, int y);
     public void setCan_move(int i, boolean val){
 
         can_move[i]=val;

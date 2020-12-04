@@ -100,6 +100,11 @@ public class Bomb extends Sprite {
         return;
     }
 
+    @Override
+    public void update(int x, int y) {
+
+    }
+
     public void setAlive(boolean alive) {
         this.alive = alive;
     }

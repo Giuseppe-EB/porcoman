@@ -1,0 +1,22 @@
+%move(0..3).
+%move(1).
+%move(3).
+%position(0, 1).
+end(18, 8).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%LEGEND:
+%                    0 LEFT
+%                    1 RIGHT
+%                    2 UP
+%                    3 DOWN
+%                    4 BOMB
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+choice(M)|not_choice(M):- move(M).
+
+:- #count{M:choice(M)}<1.
+
+
+:~ dist(X, Y), choice(X). [Y @ 1]

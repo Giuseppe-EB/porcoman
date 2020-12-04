@@ -41,10 +41,11 @@ public class MyGdxGame extends ApplicationAdapter {
 		this.input = new MouseInput(cam);
 		try {
 			sprites.add(new Player());
+			sprites.add(new Nemico());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		sprites.add(new Nemico());
+
 		cam.setToOrtho(false, this.width, this.height);
 		this.view = new StretchViewport(this.width, this.height);
 		this.stage = new Stage(view);
@@ -115,6 +116,9 @@ public class MyGdxGame extends ApplicationAdapter {
 					}
 					else if(sprite.getClass() == Bomb.class){
 						sprite.collision(sprites.get(0).getHitbox());
+					}
+					else if(sprite.getClass()==Nemico.class){
+						sprite.update(sprites.get(0).getX(), sprites.get(0).getY());
 					}
 
 				}

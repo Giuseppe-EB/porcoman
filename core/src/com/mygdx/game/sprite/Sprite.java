@@ -14,6 +14,20 @@ public abstract class Sprite {
     protected int x;
     protected int y;
 
+    protected boolean alive = true;
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+
+    public boolean[] getCan_move() {
+        return can_move;
+    }
+
+    public void setCan_move(boolean[] can_move) {
+        this.can_move = can_move;
+    }
+
     public Hitbox getHitbox() {
         return hitbox;
     }

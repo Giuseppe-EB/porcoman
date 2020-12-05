@@ -24,6 +24,7 @@ public class Level {
     String cvsSplitBy = ";";
     private Texture texture = new Texture("wall.png");
     private Texture porta= new Texture("porta.png");
+    private Texture ind_wall = new Texture("wall_2.png");
 
 
     private static Level level;
@@ -77,7 +78,7 @@ public class Level {
     public int getCell(int j, int i){
         if(i<0||j<0||i>15||j>31) {
             //System.out.println("porcodio");
-            return 1;
+            return 11;
         }
         return matrix.get(i).get(j);
     }
@@ -113,6 +114,9 @@ public class Level {
                         batch.draw(porta,row*40,col*40);
                         //System.out.println(row + "   " + col);
                     }
+                    else if(i == 11){
+                        batch.draw(ind_wall,row*40, col*40);
+                    }
                 }
             }
 
@@ -120,13 +124,13 @@ public class Level {
     }
 
     private void explosion(int i,int j) {
-        if(i>0)
+        if(i>0&&matrix.get(i-1).get(j)!=11)
             matrix.get(i-1).set(j, 0);
-        if(i<15)
+        if(i<15&&matrix.get(i+1).get(j)!=11)
             matrix.get(i+1).set(j, 0);
-        if(j>0)
+        if(j>0&&matrix.get(i).get(j-1)!=11)
             matrix.get(i).set(j-1, 0);
-        if(j<31)
+        if(j<31&&matrix.get(i).get(j+1)!=11)
             matrix.get(i).set(j+1, 0);
         matrix.get(i).set(j, 0);
     }

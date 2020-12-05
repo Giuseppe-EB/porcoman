@@ -36,7 +36,9 @@ public class PlayerAI {
         input = new ASPInputProgram();
         input.addFilesPath(dlv_input);
     }
-    public void load_fact(Position pos, ArrayList<Action> actions, ArrayList<Distance> dists, ArrayList<BombDistance> bomb_dists) throws Exception {
+    public void load_fact(Position pos, ArrayList<Action> actions, ArrayList<Distance> dists, ArrayList<BombDistance> bomb_dists, ArrayList<EnemyDistance> enemy_dists,
+
+                            ArrayList<Wall> walls) throws Exception {
 
 
         input.addObjectInput(pos);
@@ -46,7 +48,11 @@ public class PlayerAI {
             input.addObjectInput(dist);
         for(BombDistance bomb_dist : bomb_dists)
             input.addObjectInput(bomb_dist);
-
+        for(EnemyDistance enemy_dist : enemy_dists)
+            input.addObjectInput(enemy_dist);
+        if(!walls.isEmpty())
+            for(Wall wall : walls)
+                input.addObjectInput(wall);
         handler.addProgram(input);
 
     }

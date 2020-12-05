@@ -54,6 +54,26 @@ public class MyGdxGame extends ApplicationAdapter {
 		porcodio = new Texture("stupid.png");
 	}
 
+	public void restart(){
+		sprites = new ArrayList<>();
+		level = Level.getInstance();
+		this.cam = new OrthographicCamera();
+		this.input = new MouseInput(cam);
+		try {
+			sprites.add(new Player());
+			sprites.add(new Nemico());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		cam.setToOrtho(false, this.width, this.height);
+		this.view = new StretchViewport(this.width, this.height);
+		this.stage = new Stage(view);
+		batch = new SpriteBatch();
+		img = new Texture("sfondo.png");
+		porcodio = new Texture("stupid.png");
+
+	}
 	@Override
 	public void render () {
 		stage.getCamera().update();
@@ -88,17 +108,20 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 		level.draw(batch);*/
 		if(start) {
-			Player player = (Player) sprites.get(0);
+			Player player = null;
+			if(sprites.get(0).getClass()==Player.class)
+				player = (Player) sprites.get(0);
 
 
 			level.draw(batch);
 
 
-			if (player.isAi_hit()||Gdx.input.isKeyPressed((Input.Keys.Z)) && player.isCan_hit()) {
+			if (player!=null&&player.isAi_hit()||Gdx.input.isKeyPressed((Input.Keys.Z)) && player.isCan_hit()) {
 				sprites.add(new Bomb(player.getX(), player.getY()));
 				level.add_bomb(player.getX() / 40, player.getY() / 40);
 			}
 			//batch.draw(player.getTexture(), player.getX(), player.getY());
+			ArrayList<Sprite> dead_sprite = new ArrayList<>();
 			for (Sprite sprite : sprites) {
 				if (sprite.isAlive()) {
 					sprite.draw(batch);
@@ -113,23 +136,46 @@ public class MyGdxGame extends ApplicationAdapter {
 					sprite.update_hitbox();
 					if(sprite.getClass() == Player.class) {
 						sprite.collision(sprites.get(1).getHitbox());
-					}
-					else if(sprite.getClass() == Bomb.class){
-						sprite.collision(sprites.get(0).getHitbox());
+						for(Sprite sprite2 : sprites)
+							if(sprite2.getClass() == Bomb.class&&sprite2.collision(sprite.getHitbox())||
+								sprite2.getClass() == Nemico.class&&sprite.collision(sprite2.getHitbox())){
+								dead_sprite.add(sprite);
+							}
+
 					}
 					else if(sprite.getClass()==Nemico.class){
 						sprite.update(sprites.get(0).getX(), sprites.get(0).getY());
+						for(Sprite sprite2 : sprites)
+							if(sprite2.getClass()==Bomb.class&&sprite2.collision(sprite.getHitbox())) {
+								sprite.setAlive(false);
+								dead_sprite.add(sprite);
+								break;
+							}
+							else if(sprite2.getClass()==Player.class)
+								sprite2.update(sprite.getX(), sprite.getY());
+
+
 					}
 
 				}
 
 			}
+			if(!dead_sprite.isEmpty())
+				for(Sprite sprite : dead_sprite)
+					sprites.remove(sprite);
 			//System.out.println("porcodio");
 			//update(level, (Player)sprites.get(0));
+
+
 		}
 		if(!start && (Gdx.input.isTouched()))
 			start=true;
+
+
 		batch.end();
+		if(Gdx.input.isKeyJustPressed(Input.Keys.R)) {
+			this.restart();
+		}
 	}
 
 	private void update(Level level, Player player){

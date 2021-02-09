@@ -23,6 +23,13 @@ public class Player extends Sprite {
     private int count ;
     private boolean can_hit ;
     private PlayerAI ai;
+
+    private ArrayList<ArrayList<Integer>> mod_level = Level.getInstance().getMatrix();
+
+
+
+    private int end_x = 18;
+    private int end_y = 8;
     private int P2_x = 18;
     private int P2_y = 8;
     private int P3_x= 10;
@@ -33,6 +40,8 @@ public class Player extends Sprite {
     private int Pb_y;
     private boolean go_ia =false;
     private int ia_count = 0;
+
+    private ArrayList<Integer> moves = new ArrayList<Integer>();
 
 
     public boolean isAi_hit() {
@@ -124,6 +133,56 @@ public class Player extends Sprite {
         }
         else
             can_destroy[3] = false;
+    if(this.mod_level!=null)
+        free(P2_x, P2_y, this.mod_level);
+    }
+
+    //private void check_end(int p2_x, int p2_y, Level level) {
+
+
+
+
+    private void free(int x, int y, ArrayList<ArrayList<Integer>> map){
+
+        if (moves.size()>=5&&moves.get(moves.size() - 2) == 0 && moves.get(moves.size() - 1) == 0) {
+            if(P2_y != 1)
+                P2_y = 1;
+            else
+                P2_y =end_y;
+
+        }
+        else if (moves.size()>=5&&moves.get(moves.size() - 2) == 2 && moves.get(moves.size() - 1) == 3) {
+            if(P2_x!=1)
+                P2_x = 1;
+            else
+                P2_x = end_x;
+        }
+        else if(this.x/40!=this.end_x&&this.y/40!=this.end_y) {
+
+            if (map.get(y - 1).get(x) == 11 && map.get(y + 1).get(x) == 11 && map.get(y).get(x + 1) == 11) {
+                map.get(y).set(x, 11);
+                this.P2_x = x - 1;
+            }
+            else if (map.get(y - 1).get(x) == 11 && map.get(y + 1).get(x) == 11 && map.get(y).get(x - 1) == 11) {
+                map.get(y).set(x, 11);
+                this.P2_x = x + 1;
+            }
+            else if (map.get(y - 1).get(x) == 11 && map.get(y).get(x - 1) == 11 && map.get(y).get(x + 1) == 11) {
+                map.get(y).set(x, 11);
+                this.P2_y = y + 1;
+            }
+            else if (map.get(y + 1).get(x) == 11 && map.get(y).get(x - 1) == 11 && map.get(y).get(x + 1) == 11) {
+                map.get(y).set(x, 11);
+                this.P2_y = y + 1;
+            }
+
+        }
+        else{
+            P2_y = end_y;
+            P2_x = end_x;
+        }
+        //System.out.println(this.P2_x + "x" + "  y: " + this.P2_y);
+
     }
 
     @Override
@@ -169,9 +228,12 @@ public class Player extends Sprite {
             ArrayList<Wall> walls = new ArrayList<>();
 
             for(int i=0; i< can_destroy.length ; i++)
-                if(can_destroy[i])
-                    walls.add(new Wall(i, 1));
-                else
+                if(can_destroy[i]) {
+                    if(can_hit)
+                        walls.add(new Wall(i, 1));
+                    else
+                        walls.add(new Wall(i, 2));
+                } else
                     walls.add(new Wall(i, 0));
 
 //          distanza tra due punti : d( P1, P2) = sqrt((x2 - x1)^2+(y2-y1)^2)
@@ -181,16 +243,17 @@ public class Player extends Sprite {
 
             int dist = 101;
 
+            int end_dist = (int) round(10*sqrt(pow((P1_x - P2_x), 2)+pow((P1_y - P2_y), 2)));
             if(nemico_x!=0 && nemico_y !=0)
                 dist = (int) round(10 * sqrt(pow((P1_x - nemico_x), 2) + pow((P1_y - nemico_y), 2)));
-            if(dist<100){
+            if(dist<end_dist){
                 P3_x = nemico_x;
                 P3_y = nemico_y;
             }
             if(can_move[0]||can_destroy[0]) {
                 actions.add(new Action(0));
                 dists.add(new Distance(0, (int) round(10*sqrt(pow(((P1_x-1) - P2_x), 2)+pow((P1_y - P2_y), 2)))));
-                if(dist<100)
+                if(dist<end_dist)
                     enemy_dists.add(new EnemyDistance(0, (int) round(10*sqrt(pow(((P1_x-1) - P3_x), 2)+pow((P1_y - P3_y), 2)))));
                 if(!can_hit){
                     bomb_dists.add(new BombDistance(0, (int) round(10*sqrt(pow(((P1_x-1) - Pb_x), 2)+pow((P1_y - Pb_y), 2)))));
@@ -200,7 +263,7 @@ public class Player extends Sprite {
             if(can_move[1]||can_destroy[1]) {
                 actions.add(new Action(1));
                 dists.add(new Distance(1, (int) round(10*sqrt(pow(((P1_x+1) - P2_x), 2)+pow((P1_y - P2_y), 2)))));
-                if(dist<100)
+                if(dist<end_dist)
                     enemy_dists.add(new EnemyDistance(1, (int) round(10*sqrt(pow(((P1_x+1) - P3_x), 2)+pow((P1_y - P3_y), 2)))));
 
                 if(!can_hit) {
@@ -210,7 +273,7 @@ public class Player extends Sprite {
             if(can_move[2]||can_destroy[2]) {
                 actions.add(new Action(2));
                 dists.add(new Distance(2, (int) round(10*sqrt(pow((P1_x - P2_x), 2)+pow(((P1_y+1) - P2_y), 2)))));
-                if(dist<100)
+                if(dist<end_dist)
                     enemy_dists.add(new EnemyDistance(2, (int) round(10*sqrt(pow((P1_x - P3_x), 2)+pow(((P1_y+1) - P3_y), 2)))));
 
                 if(!can_hit) {
@@ -221,7 +284,7 @@ public class Player extends Sprite {
             if(can_move[3]||can_destroy[3]) {
                 actions.add(new Action(3));
                 dists.add(new Distance(3, (int) round(10*sqrt(pow((P1_x - P2_x), 2)+pow(((P1_y-1) - P2_y), 2)))));
-                if(dist<100)
+                if(dist<end_dist)
                     enemy_dists.add(new EnemyDistance(3, (int) round(10*sqrt(pow((P1_x - P3_x), 2)+pow(((P1_y-1) - P3_y), 2)))));
                 if(!can_hit){
                     bomb_dists.add(new BombDistance(3, (int) round(10*sqrt(pow((P1_x - Pb_x), 2)+pow(((P1_y-1) - Pb_y), 2)))));
@@ -282,6 +345,7 @@ public class Player extends Sprite {
             }
             nemico_y = 0;
             nemico_x = 0;
+            moves.add(move);
             ai.clear();
         }
 

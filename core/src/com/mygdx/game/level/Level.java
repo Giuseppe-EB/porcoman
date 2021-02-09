@@ -34,10 +34,14 @@ public class Level {
 
     private ArrayList<ArrayList<Integer>> matrix ;
 
+    public ArrayList<ArrayList<Integer>> getMatrix() {
+        return matrix;
+    }
 
     private Level() {
         bomb_count = 0;
         matrix = new ArrayList<ArrayList<Integer>>();
+        this.loadLevel();
     }
     public static Level getInstance(){
         return new Level();
@@ -82,11 +86,11 @@ public class Level {
         }
         return matrix.get(i).get(j);
     }
-    public void setCell(int j, int i){
+    public void setCell(int j, int i, int x){
         /*if(i<0||j<0||i>15||j>31) {
             System.out.println("porcodio");
         }*/
-        matrix.get(i).set(j, 1);
+        matrix.get(i).set(j, x);
     }
     public void draw(SpriteBatch batch) {
             //System.out.println("porcodio1");

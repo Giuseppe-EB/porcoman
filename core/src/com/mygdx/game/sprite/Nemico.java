@@ -56,8 +56,8 @@ public class Nemico extends Sprite {
 
     public Nemico() throws IOException {
         super("nemico_queg.png");
-        x = 400;
-        y = 400;
+        x = 1000;
+        y = 100;
         direction = 0;
         texture_2 = new Texture("nemico_queg2.png");
         ai= new EnemyAI();

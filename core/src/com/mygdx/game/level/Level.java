@@ -23,7 +23,7 @@ public class Level {
     String line = "";
     String cvsSplitBy = ";";
     private Texture texture = new Texture("wall.png");
-    private Texture porta= new Texture("porta.png");
+    private Texture porta= new Texture("chiusa.png");
     private Texture ind_wall = new Texture("wall_2.png");
 
 
@@ -58,7 +58,11 @@ public class Level {
                 //System.out.println("Country [code= " + country[4] + " , name=" + country[5] + "]");
                 matrix.add(row);
             }
+            for(int i=0, j=matrix.size()-1 ; i<j; i++)
+            {
 
+                matrix.add(i, matrix.remove(j));
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -76,7 +80,7 @@ public class Level {
     }
 
     public int getCell(int j, int i){
-        if(i<0||j<0||i>15||j>31) {
+        if(i<0||j<0||i>matrix.size()-1||j>matrix.get(i).size()) {
             //System.out.println("porcodio");
             return 11;
         }

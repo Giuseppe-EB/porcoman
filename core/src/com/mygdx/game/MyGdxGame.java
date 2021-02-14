@@ -24,8 +24,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	Texture porcodio;
 
 	private boolean start=false;
-	public static int height = 640;
-	public static int width = 1280;
+	public static int height = 440;
+	public static int width = 680;
 	private OrthographicCamera cam;
 	private StretchViewport view;
 	private Stage stage;

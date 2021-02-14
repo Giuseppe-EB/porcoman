@@ -90,8 +90,8 @@ public class Player extends Sprite {
 
     public Player() throws IOException {
         super("stupid.png");
-        this.x = 1;
-        this.y = 580;
+        this.x = 50;
+        this.y = 140;
         this.enemyX = x/40;
         this.enemyY = y/40;
         can_hit = true;

@@ -80,7 +80,7 @@ public class Level {
     }
 
     public int getCell(int j, int i){
-        if(i<0||j<0||i>matrix.size()-1||j>matrix.get(i).size()) {
+        if(i<0||j<0||i>matrix.size()-1||j>matrix.get(i).size()-1) {
             //System.out.println("porcodio");
             return 11;
         }

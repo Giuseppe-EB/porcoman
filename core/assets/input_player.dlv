@@ -34,10 +34,22 @@ choice(M)|not_choice(M):- move(M).
 % distanza tra due punti : d( P1, P2) = sqrt((x2 - x1)^2+(y2-y1)^2)
 
 
+% mode GOAL scegli la cella più vicina all'obiettivo
+
 :~ mode(0), dist(X, Y), choice(X). [Y @ 1]
-:~ mode(0), dist(X, 0), wall(X, 1), choice(Y), Y!=4. [3 @ 1]
+
+    % se la cella più vicina è dietro ad un muro distruttibile piazza la bomba
+
+    :~ mode(0), dist(X, 0), wall(X, 1), choice(Y), Y!=4. [3 @ 1]
+
+% mode BOMB scegli la cella più lontana dalla bomba
 
 :~ mode(1), bomb_dist(X, Y), choice(X). [4-Y @ 1]
+
+    % torna indietro al sicuro
+
+    :~ mode(1), dist(X, Y), choice(X). [4-Y @ 1]
+
 
 %:~ bomb_dist(X, Y), choice(X), X!=4. [-Y @ 5]
 

@@ -1,5 +1,6 @@
 package com.mygdx.game.sprite;
 
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,6 +11,7 @@ import it.unical.mat.embasp.languages.asp.AnswerSets;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +21,8 @@ import static java.lang.StrictMath.round;
 
 public class Player extends Sprite {
 
+    private static Logger log= Logger.getLogger("log");
+
     private static int GOAL = 999;
     private static int BOMB = 998;
     private static int ENEMY = 997;
@@ -26,6 +30,7 @@ public class Player extends Sprite {
     private int bombRange = 1;
 
 
+    private int bombPlaced = 0;
 
     private boolean[] can_destroy;
     private int count ;
@@ -39,6 +44,8 @@ public class Player extends Sprite {
     private int enemyY=10;
     private int bombX;
     private int bombY;
+    private int bombGoalX = 0;
+    private int bombGoalY = 0;
     private boolean go_ia = false;
     private int ia_count = 0;
 
@@ -151,10 +158,13 @@ public class Player extends Sprite {
      */
     @Override
     public void action() throws Exception {
-        if (!can_hit)
+        if (!can_hit || count > 0)
             count++;
         if (count == 100) {
             can_hit = true;
+        }
+        else if (count == 130) {
+            bombPlaced--;
             count = 0;
         }
 
@@ -171,8 +181,25 @@ public class Player extends Sprite {
             int move = 0;
             int mode = 0;
 
-            if (!can_hit)
+            int currentGoalX = goalX;
+            int currentGoalY = goalY;
+
+            log.info("count bomb: " + count);
+
+            if (!can_hit) {
                 mode = 1;
+                log.info("can't hit");
+            }
+            if (count > 0 && count <=130 && (playerX!=bombGoalX || playerY!=bombGoalY)){
+                currentGoalX = bombGoalX;
+                currentGoalY = bombGoalY;
+                log.info("bomb goal");
+            }
+
+
+            log.info("current goal x: " + currentGoalX +", current goal y: " + currentGoalY);
+            log.info("current bombgoal x: " + bombGoalX +", current bombgoal y: " + bombGoalY);
+            log.info("current player x: " + playerX +", current player y: " + playerY);
 
             boolean trovato= false;
 
@@ -196,7 +223,7 @@ public class Player extends Sprite {
 
             ai.load_fact(   new Position(playerX, playerY),
                             actions,
-                            makeDistances(buildDistances(goalX, goalY)),
+                            makeDistances(buildDistances(currentGoalX, currentGoalY)),
                             makeBombDistances(buildDistances(bombX, bombY)),
                             makeEnemyDistances(buildDistances(enemyX, enemyY)),
                             walls,
@@ -221,23 +248,26 @@ public class Player extends Sprite {
                 set_allCan_move(0, true);
                 this.x += 40;
             }
-            if (move == 2) {
+            else if (move == 2) {
                 set_allCan_move(0, true);
                 this.y += 40;
             }
-            if (move == 3) {
+            else if (move == 3) {
                 set_allCan_move(0, true);
                 this.y -= 40;
             }
-            if (move == 0) {
+            else if (move == 0) {
                 set_allCan_move(0, true);
                 this.x -= 40;
             }
-            if (move == 4 && can_hit) {
+            else if (move == 4 && can_hit) {
                 ai_hit = true;
                 can_hit = false;
                 this.bombX=playerX;
                 this.bombY=playerY;
+                this.bombGoalX=playerX;
+                this.bombGoalY=playerY;
+                bombPlaced++;
             }
             enemyY = 0;
             enemyX = 0;

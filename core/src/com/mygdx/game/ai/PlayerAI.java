@@ -36,12 +36,16 @@ public class PlayerAI {
         input = new ASPInputProgram();
         input.addFilesPath(dlv_input);
     }
-    public void load_fact(Position pos, ArrayList<Action> actions, ArrayList<Distance> dists, ArrayList<BombDistance> bomb_dists, ArrayList<EnemyDistance> enemy_dists,
-
-                            ArrayList<Wall> walls) throws Exception {
-
-
+    public void load_fact(Position pos,
+                          ArrayList<Action> actions,
+                          ArrayList<Distance> dists,
+                          ArrayList<BombDistance> bomb_dists,
+                          ArrayList<EnemyDistance> enemy_dists,
+                          ArrayList<Wall> walls,
+                          Mode mode)
+            throws Exception {
         input.addObjectInput(pos);
+        input.addObjectInput(mode);
         for(Action action : actions)
             input.addObjectInput(action);
         for(Distance dist : dists)
@@ -54,8 +58,8 @@ public class PlayerAI {
             for(Wall wall : walls)
                 input.addObjectInput(wall);
         handler.addProgram(input);
-
     }
+
     public AnswerSets getAnswerSets() throws Exception {
         Output o = handler.startSync();
         try {

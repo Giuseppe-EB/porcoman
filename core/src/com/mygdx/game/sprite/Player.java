@@ -166,6 +166,8 @@ public class Player extends Sprite {
             ArrayList<BombDistance> bomb_dists = new ArrayList<>();
             ArrayList<EnemyDistance> enemy_dists= new ArrayList<>();
 
+            ArrayList<Double> distances = new ArrayList<>();
+
             ArrayList<Wall> walls = new ArrayList<>();
 
             for(int i=0; i< can_destroy.length ; i++)
@@ -189,7 +191,7 @@ public class Player extends Sprite {
             }
             if(can_move[0]||can_destroy[0]) {
                 actions.add(new Action(0));
-                dists.add(new Distance(0, (int) round(10*sqrt(pow(((P1_x-1) - P2_x), 2)+pow((P1_y - P2_y), 2)))));
+                dists.add(new Distance(0, round(sqrt(pow(((P1_x-1) - P2_x), 2)+pow((P1_y - P2_y), 2)))));
                 if(dist<100)
                     enemy_dists.add(new EnemyDistance(0, (int) round(10*sqrt(pow(((P1_x-1) - P3_x), 2)+pow((P1_y - P3_y), 2)))));
                 if(!can_hit){
@@ -199,7 +201,7 @@ public class Player extends Sprite {
             }
             if(can_move[1]||can_destroy[1]) {
                 actions.add(new Action(1));
-                dists.add(new Distance(1, (int) round(10*sqrt(pow(((P1_x+1) - P2_x), 2)+pow((P1_y - P2_y), 2)))));
+                dists.add(new Distance(1, round(sqrt(pow(((P1_x+1) - P2_x), 2)+pow((P1_y - P2_y), 2)))));
                 if(dist<100)
                     enemy_dists.add(new EnemyDistance(1, (int) round(10*sqrt(pow(((P1_x+1) - P3_x), 2)+pow((P1_y - P3_y), 2)))));
 
@@ -209,7 +211,7 @@ public class Player extends Sprite {
             }
             if(can_move[2]||can_destroy[2]) {
                 actions.add(new Action(2));
-                dists.add(new Distance(2, (int) round(10*sqrt(pow((P1_x - P2_x), 2)+pow(((P1_y+1) - P2_y), 2)))));
+                dists.add(new Distance(2, round(sqrt(pow((P1_x - P2_x), 2)+pow(((P1_y+1) - P2_y), 2)))));
                 if(dist<100)
                     enemy_dists.add(new EnemyDistance(2, (int) round(10*sqrt(pow((P1_x - P3_x), 2)+pow(((P1_y+1) - P3_y), 2)))));
 
@@ -220,7 +222,7 @@ public class Player extends Sprite {
             }
             if(can_move[3]||can_destroy[3]) {
                 actions.add(new Action(3));
-                dists.add(new Distance(3, (int) round(10*sqrt(pow((P1_x - P2_x), 2)+pow(((P1_y-1) - P2_y), 2)))));
+                dists.add(new Distance(3,  round(sqrt(pow((P1_x - P2_x), 2)+pow(((P1_y-1) - P2_y), 2)))));
                 if(dist<100)
                     enemy_dists.add(new EnemyDistance(3, (int) round(10*sqrt(pow((P1_x - P3_x), 2)+pow(((P1_y-1) - P3_y), 2)))));
                 if(!can_hit){
@@ -239,7 +241,7 @@ public class Player extends Sprite {
             }
             if(dist<100)
                 enemy_dists.add(new EnemyDistance(4, (int) round(10*sqrt(pow((P1_x - P3_x), 2)+pow((P1_y - P3_y), 2)))));
-            dists.add(new Distance(4, (int) round(10*sqrt(pow((P1_x - P2_x), 2)+pow((P1_y - P2_y), 2)))));
+            dists.add(new Distance(4, round(sqrt(pow((P1_x - P2_x), 2)+pow((P1_y - P2_y), 2)))));
 
             ai.load_fact(new Position(P1_x, P1_y),actions, dists, bomb_dists, enemy_dists, walls);
             AnswerSets answers = ai.getAnswerSets();

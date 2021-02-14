@@ -18,18 +18,18 @@ public class Distance {
         this.move = move;
     }
 
-    public int getDist() {
+    public long getDist() {
         return dist;
     }
 
-    public void setDist(int dist) {
+    public void setDist(long dist) {
         this.dist = dist;
     }
 
     @Param(1)
-    private int dist;
+    private long dist;
 
-    public Distance(int move, int dist){
+    public Distance(int move, long dist){
         this.move=move;
         this.dist=dist;
     }

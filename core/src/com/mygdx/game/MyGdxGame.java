@@ -17,8 +17,12 @@ import com.mygdx.game.sprite.Sprite;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class MyGdxGame extends ApplicationAdapter {
+
+	private static Logger log= Logger.getLogger("log");
+
 	SpriteBatch batch;
 	Texture img;
 	Texture porcodio;
@@ -55,23 +59,8 @@ public class MyGdxGame extends ApplicationAdapter {
 	}
 
 	public void restart(){
-		sprites = new ArrayList<>();
-		level = Level.getInstance();
-		this.cam = new OrthographicCamera();
-		this.input = new MouseInput(cam);
-		try {
-			sprites.add(new Player());
-			sprites.add(new Nemico());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
-		cam.setToOrtho(false, this.width, this.height);
-		this.view = new StretchViewport(this.width, this.height);
-		this.stage = new Stage(view);
-		batch = new SpriteBatch();
-		img = new Texture("sfondo.png");
-		porcodio = new Texture("stupid.png");
+		this.create();
 
 	}
 	@Override
@@ -82,31 +71,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch.setProjectionMatrix(stage.getCamera().combined);
 		batch.begin();
 		batch.draw(img, 0, 0);
-		/*if(Gdx.input.isKeyPressed(Input.Keys.A)){
-				player.setX(player.getX()-10);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.D)){
-				player.setX(player.getX()+10);
-		}
-		if(Gdx.input.isKeyPressed((Input.Keys.W)))
-			player.setY(player.getY()+10);
-		if(Gdx.input.isKeyPressed((Input.Keys.S)))
-			player.setY(player.getY()-10);
-
-		 */
-
-		/*input.convertInput();
-		if(Gdx.input.isTouched()){
-				level.setCell((int)input.x()/40,(int)input.y()/40);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-			try {
-				level.save();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		level.draw(batch);*/
 		if(start) {
 			Player player = null;
 			if(sprites.get(0).getClass()==Player.class)
@@ -117,7 +81,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 
 			if (player!=null&&player.isAi_hit()||Gdx.input.isKeyPressed((Input.Keys.Z)) && player.isCan_hit()) {
-				sprites.add(new Bomb(player.getX(), player.getY()));
+				sprites.add(new Bomb(player.getX(), player.getY(), player.getBombRange()));
 				level.add_bomb(player.getX() / 40, player.getY() / 40);
 			}
 			//batch.draw(player.getTexture(), player.getX(), player.getY());
@@ -137,8 +101,8 @@ public class MyGdxGame extends ApplicationAdapter {
 					if(sprite.getClass() == Player.class) {
 						sprite.collision(sprites.get(1).getHitbox());
 						for(Sprite sprite2 : sprites)
-							if(sprite2.getClass() == Bomb.class&&sprite2.collision(sprite.getHitbox())||
-								sprite2.getClass() == Nemico.class&&sprite.collision(sprite2.getHitbox())){
+							if(sprite2.getClass() == Bomb.class && sprite2.collision(sprite.getHitbox())||
+								sprite2.getClass() == Nemico.class && sprite.collision(sprite2.getHitbox())){
 								dead_sprite.add(sprite);
 							}
 
@@ -154,7 +118,6 @@ public class MyGdxGame extends ApplicationAdapter {
 							else if(sprite2.getClass()==Player.class)
 								sprite2.update(sprite.getX(), sprite.getY());
 
-
 					}
 
 				}
@@ -163,9 +126,6 @@ public class MyGdxGame extends ApplicationAdapter {
 			if(!dead_sprite.isEmpty())
 				for(Sprite sprite : dead_sprite)
 					sprites.remove(sprite);
-			//System.out.println("porcodio");
-			//update(level, (Player)sprites.get(0));
-
 
 		}
 		if(!start && (Gdx.input.isTouched()))
@@ -178,31 +138,6 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 	}
 
-	private void update(Level level, Player player){
-
-		if(level.getCell((player.getX()/40)+1, player.getY()/40)%10 != 0){
-			//System.out.println("bloccato da destra");
-				player.setCan_move(1, false);
-		}
-		if(level.getCell((player.getX()/40)-1, player.getY()/40)%10 != 0){
-			//System.out.println("bloccato da sinistra");
-				player.setCan_move(0, false);
-		}
-		if(level.getCell((player.getX()/40), (player.getY()/40) + 1)%10 != 0){
-			player.setCan_move(2, false);
-			//System.out.println("bloccato da su");
-		}
-		if(level.getCell((player.getX()/40), (player.getY()/40) - 1 )%10!= 0){
-			player.setCan_move(3, false);
-			//System.out.println("bloccato da giu");
-		}
-		if(level.getCell((player.getX()/40), (player.getY()/40) ) == 10){
-
-			System.out.println("prossimo livello");
-			level.setCsvFile("level2.csv");
-		}
-
-	}
 	@Override
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);

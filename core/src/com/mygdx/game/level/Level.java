@@ -5,8 +5,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class Level {
+
+    private int bombRange = 1;
+
+    private static Logger log= Logger.getLogger("log");
+
     String csvFile = new String("level.csv");
 
     public String getCsvFile() {
@@ -111,7 +117,7 @@ public class Level {
                     }
                     else if( i == 2 ){
                         bomb_count = 0;
-                        explosion(col, row);
+                        explosion(col, row, bombRange);
                     }
                     else if(i == 10)
                     {
@@ -127,16 +133,67 @@ public class Level {
 
     }
 
-    private void explosion(int i,int j) {
-        if(i>0&&matrix.get(i-1).get(j)!=11)
-            matrix.get(i-1).set(j, 0);
-        if(i<15&&matrix.get(i+1).get(j)!=11)
-            matrix.get(i+1).set(j, 0);
-        if(j>0&&matrix.get(i).get(j-1)!=11)
-            matrix.get(i).set(j-1, 0);
-        if(j<31&&matrix.get(i).get(j+1)!=11)
-            matrix.get(i).set(j+1, 0);
+    private void analyzeExplosionX(int i, int j, int bombRange){
+
+        if(this.getCell(j, i - 1) != 11) {
+            for (int col = i; col >= i - bombRange; col--) {
+
+                int currentPos = this.getCell(j, col);
+
+                if (currentPos != 11 && currentPos != 0 && currentPos != 2) {
+                    matrix.get(col).set(j, 0);
+                    break;
+                }
+            }
+        }
+        if(this.getCell(j, i + 1 ) != 11) {
+            for (int col = i; col <= i + bombRange; col++) {
+
+                int currentPos = this.getCell(j, col);
+
+                if (currentPos != 11 && currentPos != 0 && currentPos != 2) {
+                    matrix.get(col).set(j, 0);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void analyzeExplosionY(int i, int j, int bombRange){
+
+        if(this.getCell(j - 1, i) != 11) {
+            for (int row = j; row >= j - bombRange; row--) {
+
+                int currentPos = this.getCell(row, i);
+
+                if (currentPos != 11 && currentPos != 0 && currentPos != 2) {
+                    matrix.get(i).set(row, 0);
+                    break;
+                }
+            }
+        }
+        if(this.getCell(j + 1, i ) != 11) {
+            for (int row = j; row <= j + bombRange; row++) {
+
+                int currentPos = this.getCell(row, i);
+
+                if (currentPos != 11 && currentPos != 0 && currentPos != 2) {
+                    matrix.get(i).set(row, 0);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void explosion(int i, int j, int bombRange) {
+
+        log.warning("explosion on pos: [ " + j + ", " + i + " ]" );
+
+        analyzeExplosionX(i, j, bombRange);
+        analyzeExplosionY(i, j, bombRange);
+
         matrix.get(i).set(j, 0);
+
     }
 
     /*
@@ -162,5 +219,12 @@ public class Level {
         file.close();
     }
 
+    public int getBombRange() {
+        return bombRange;
+    }
+
+    public void setBombRange(int bombRange) {
+        this.bombRange = bombRange;
+    }
 }
 

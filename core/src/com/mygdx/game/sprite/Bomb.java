@@ -6,86 +6,52 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.level.Level;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class Bomb extends Sprite {
+
+    private static Logger log= Logger.getLogger("log");
+
+    private int bombRange = 1;
 
     int count = 0;
     boolean explosion = false;
     boolean alive = false;
-    ArrayList<Hitbox> hitboxes;
+    ArrayList<Hitbox> hitBoxes;
 
 
     @Override
     public boolean collision(Hitbox hitbox) {
 
-        for(Hitbox hit : hitboxes)
-            if(explosion&&hit.collision(hitbox)) {
-             System.out.println("collp");
+
+
+        for(Hitbox hit : hitBoxes) {
+
+
+            if (explosion && hit.collision(hitbox)) {
+
                 return true;
             }
-        /*this.hitbox.setX(this.x + 40);
-        if(this.hitbox.collision(hitbox)){
-            System.out.println("colpit sx");
-            hitbox.update(this.x, this.y);
-            return true;
         }
-        else hitbox.update(this.x, this.y);
-
-        this.hitbox.setX(this.x - 40);
-        if(this.hitbox.collision(hitbox)){
-            System.out.println("colpit dx");
-            hitbox.update(this.x, this.y);
-            return true;
-        }
-        else hitbox.update(this.x, this.y);
-
-        this.hitbox.setY(this.y + 40);
-        if(this.hitbox.collision(hitbox)){
-            System.out.println("colpit su");
-            hitbox.update(this.x, this.y);
-            return true;
-        }
-        else hitbox.update(this.x, this.y);
-
-        this.hitbox.setY(this.y - 40);
-        if(this.hitbox.collision(hitbox)){
-            System.out.println("colpit giu");
-            hitbox.update(this.x, this.y);
-            return true;
-        }
-        else hitbox.update(this.x, this.y);
-
-        /*if (super.collision(hitbox.setX(hitbox.getX() + 40))) {
-            System.out.println("colpit dx");
-            return true;
-        } else if (super.collision(hitbox.setX(hitbox.getX() - 40))) {
-            System.out.println("colpit sx");
-            return true;
-
-        } else if (super.collision(hitbox.setY(hitbox.getY() + 40))) {
-            System.out.println("colpit su");
-            return true;
-
-        } else if (super.collision(hitbox.setY(hitbox.getY() - 40))){
-            System.out.println("colpit giu");
-            return true;
-
-        }*/
-
+        
         return false;
 
 
     }
 
-    public Bomb(int x, int y) {
+    public Bomb(int x, int y, int bombRange) {
         super("bombs.png");
         alive = true;
-        hitboxes =  new ArrayList<Hitbox>();
-        hitboxes.add(new Hitbox(x+40, y));
-        hitboxes.add(new Hitbox(x-40, y));
-        hitboxes.add(new Hitbox(x, y+40));
-        hitboxes.add(new Hitbox(x, y-40));
-
+        this.bombRange = bombRange;
+        hitBoxes =  new ArrayList<Hitbox>();
+        for(int i = 1; i <= bombRange; i++) {
+            hitBoxes.add(new Hitbox(x + (i * 40), y));
+            hitBoxes.add(new Hitbox(x - (i * 40), y));
+            hitBoxes.add(new Hitbox(x, y + (i * 40)));
+            hitBoxes.add(new Hitbox(x, y - (i * 40)));
+        }
+        for (Hitbox hit : hitBoxes)
+            log.info("current hit x: " + hit.getX() + "current hit y:" + hit.getY());
         super.setX(x);
         super.setY(y);
     }
@@ -102,7 +68,7 @@ public class Bomb extends Sprite {
 
     @Override
     public void update(int x, int y) {
-
+        return;
     }
 
     public void setAlive(boolean alive) {
@@ -129,10 +95,8 @@ public class Bomb extends Sprite {
 
     @Override
     public void update_hitbox() {
-        hitboxes.get(0).update(x+40, y);
-        hitboxes.get(1).update(x-40, y);
-        hitboxes.get(2).update(x, y+40);
-        hitboxes.get(3).update(x, y-40);
+
+        return;
 
     }
 

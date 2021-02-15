@@ -29,6 +29,16 @@ public class Player extends Sprite {
 
     private int bombRange = 1;
 
+    public int getBombRange() {
+        return bombRange;
+    }
+
+    public void setBombRange(int bombRange) {
+        this.bombRange = bombRange;
+    }
+
+    private int bombCountLimit = 120 + bombRange * 10;
+
 
     private int bombPlaced = 0;
 
@@ -112,19 +122,17 @@ public class Player extends Sprite {
         super.update(level);
         if(level.getCell((getX()/40), (getY()/40) ) == 10){
 
-            System.out.println("prossimo livello");
+            log.info("next level");
             level.setCsvFile("level2.csv");
         }
         if(level.getCell((getX()/40)+1, getY()/40) == 1){
 
-            //System.out.println(this.getClass() + "bloccato da destra");
-            //System.out.println(this.getClass());
             can_destroy[1] = true;
         }
         else
             can_destroy[1] = false;
         if(level.getCell((getX()/40)-1, getY()/40) == 1){
-            //System.out.println(this.getClass() + "bloccato da sinistra");
+
             can_destroy[0] = true;
         }
         else
@@ -139,6 +147,7 @@ public class Player extends Sprite {
         }
         else
             can_destroy[3] = false;
+
     }
 
     @Override
@@ -163,7 +172,7 @@ public class Player extends Sprite {
         if (count == 100) {
             can_hit = true;
         }
-        else if (count == 130) {
+        else if (count == this.bombCountLimit) {
             bombPlaced--;
             count = 0;
         }
@@ -190,7 +199,7 @@ public class Player extends Sprite {
                 mode = 1;
                 log.info("can't hit");
             }
-            if (count > 0 && count <=130 && (playerX!=bombGoalX || playerY!=bombGoalY)){
+            if (count > 0 && count <= this.bombCountLimit && (playerX!=bombGoalX || playerY!=bombGoalY)){
                 currentGoalX = bombGoalX;
                 currentGoalY = bombGoalY;
                 log.info("bomb goal");
@@ -200,8 +209,6 @@ public class Player extends Sprite {
             log.info("current goal x: " + currentGoalX +", current goal y: " + currentGoalY);
             log.info("current bombgoal x: " + bombGoalX +", current bombgoal y: " + bombGoalY);
             log.info("current player x: " + playerX +", current player y: " + playerY);
-
-            boolean trovato= false;
 
             ArrayList<Action> actions = new ArrayList<>();
             ArrayList<Wall> walls = new ArrayList<>();
@@ -238,8 +245,8 @@ public class Player extends Sprite {
                     //System.out.println(atom);
                     matcher = pattern.matcher(atom);
 
-                    if (!trovato&&matcher.find()) {
-                        System.out.println(matcher.group(1));
+                    if (matcher.find()) {
+                        log.info("DLV output: " + matcher.group(1));
                         move = Integer.parseInt(matcher.group(1));
                     }
                 }

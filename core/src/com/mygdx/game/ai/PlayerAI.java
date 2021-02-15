@@ -8,8 +8,11 @@ import it.unical.mat.embasp.specializations.dlv2.desktop.DLV2DesktopService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class PlayerAI {
+
+    private static Logger log= Logger.getLogger("log");
 
     private static Handler handler;
     private ASPInputProgram input;
@@ -64,13 +67,13 @@ public class PlayerAI {
         Output o = handler.startSync();
         try {
             for(int i=0; ; i++){
-                System.out.println("input dlv = " + handler.getInputProgram(i).getPrograms());
+                log.info("input dlv = " + handler.getInputProgram(i).getPrograms());
             }}catch (Exception ignore){}
         if (((AnswerSets) o).getAnswersets().size() == 0) {
             throw new Exception("NO ANSWERSET!");
         }
         for (AnswerSet an : ((AnswerSets) o).getAnswersets()) {
-            System.out.println("output = " + an.getAnswerSet());
+            log.info("output = " + an.getAnswerSet());
         }
 
         return (AnswerSets) o;

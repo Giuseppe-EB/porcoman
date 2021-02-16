@@ -21,6 +21,16 @@ import static java.lang.StrictMath.round;
 
 public class Player extends Sprite {
 
+    private boolean doorLocked = true;
+
+    public boolean isDoorLocked() {
+        return doorLocked;
+    }
+
+    public void setDoorLocked(boolean doorLocked) {
+        this.doorLocked = doorLocked;
+    }
+
     private static Logger log= Logger.getLogger("log");
 
     private static int GOAL = 999;
@@ -120,7 +130,7 @@ public class Player extends Sprite {
     @Override
     public void update(Level level) {
         super.update(level);
-        if(level.getCell((getX()/40), (getY()/40) ) == 10){
+        if(level.getCell((getX()/40), (getY()/40) ) == 10 && !doorLocked){
 
             log.info("next level");
             level.setCsvFile("level2.csv");
@@ -413,5 +423,16 @@ public class Player extends Sprite {
             x*=40;
             y*=40;
             batch.draw(this.texture, x, y);
+    }
+
+    public void dropPowerUp(PowerUp powerUp){
+
+        if(powerUp.getClass() == IncreaseBombRange.class && bombRange < 4) {
+            this.bombRange++;
+            log.info("bomb range: " + bombRange);
+        }
+        else if(powerUp.getClass() == Key.class)
+            doorLocked = false;
+
     }
 }

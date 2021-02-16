@@ -3,8 +3,15 @@ package com.mygdx.game.sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class IncreaseBombRange extends PowerUp{
-    public IncreaseBombRange(String path) {
-        super(path);
+    public IncreaseBombRange(int x, int y) {
+
+        super("powerups-bombrange.png");
+
+        this.x = x;
+        this.y = y;
+
+        this.setHitbox(new Hitbox(x, y));
+
     }
 
     @Override

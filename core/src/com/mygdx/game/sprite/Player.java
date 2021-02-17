@@ -22,6 +22,15 @@ import static java.lang.StrictMath.round;
 public class Player extends Sprite {
 
     private boolean doorLocked = true;
+    private boolean powerUpFree = true;
+
+    public boolean isPowerUpFree() {
+        return powerUpFree;
+    }
+
+    public void setPowerUpFree(boolean powerUpFree) {
+        this.powerUpFree = powerUpFree;
+    }
 
     public boolean isDoorLocked() {
         return doorLocked;
@@ -29,6 +38,22 @@ public class Player extends Sprite {
 
     public void setDoorLocked(boolean doorLocked) {
         this.doorLocked = doorLocked;
+    }
+
+    public int getCurrentGoalX() {
+        return currentGoalX;
+    }
+
+    public void setCurrentGoalX(int currentGoalX) {
+        this.currentGoalX = currentGoalX;
+    }
+
+    public int getCurrentGoalY() {
+        return currentGoalY;
+    }
+
+    public void setCurrentGoalY(int currentGoalY) {
+        this.currentGoalY = currentGoalY;
     }
 
     private static Logger log= Logger.getLogger("log");
@@ -52,14 +77,20 @@ public class Player extends Sprite {
 
     private int bombPlaced = 0;
 
+    private int goalX = 15;
+    private int goalY = 6;
+
+    private int currentGoalX;
+    private int currentGoalY;
+
+    private boolean[] dirSafe;
+
     private boolean[] can_destroy;
     private int count ;
     private boolean can_hit ;
     private PlayerAI ai;
     private int playerX = 1;
     private int playerY = 10;
-    private int goalX = 18;
-    private int goalY = 8;
     private int enemyX= 10;
     private int enemyY=10;
     private int bombX;
@@ -126,38 +157,117 @@ public class Player extends Sprite {
         System.out.println("porcodio");
         ai = new PlayerAI();
         can_destroy = new boolean[]{false, false, false, false};
+        dirSafe = new boolean[]{false, false, false, false};
     }
     @Override
     public void update(Level level) {
         super.update(level);
-        if(level.getCell((getX()/40), (getY()/40) ) == 10 && !doorLocked){
+
+        int currentX = getX()/40;
+        int currentY = getY()/40;
+        if(level.getCell(currentX, currentY ) == 10 && !doorLocked){
 
             log.info("next level");
             level.setCsvFile("level2.csv");
         }
-        if(level.getCell((getX()/40)+1, getY()/40) == 1){
+        if(level.getCell(currentX + 1, currentY) == 1){
 
             can_destroy[1] = true;
         }
         else
             can_destroy[1] = false;
-        if(level.getCell((getX()/40)-1, getY()/40) == 1){
+        if(level.getCell(currentX - 1, currentY) == 1){
 
             can_destroy[0] = true;
         }
         else
             can_destroy[0] = false;
-        if(level.getCell((getX()/40), (getY()/40) + 1) == 1){
+        if(level.getCell(currentX, currentY + 1) == 1){
             can_destroy[2] = true;
         }
         else
             can_destroy[2] = false;
-        if(level.getCell((getX()/40), (getY()/40) - 1 ) == 1){
+        if(level.getCell(currentX, currentY - 1 ) == 1){
             can_destroy[3] = true;
         }
         else
             can_destroy[3] = false;
 
+        if(bombGoalX == playerX && bombGoalY == playerY)
+            for (int i = 0; i < 4; i++){
+                dirSafe[i] = analyzeSafe(currentY, currentX, level, i);
+            }
+        else
+            for (int i = 0; i < 4; i++){
+                dirSafe[i] = true;
+            }
+
+    }
+    private boolean analyzeSafe(int i, int j, Level level, int move){
+
+
+        if(move == 3) {
+            for (int col = i - 1; col >= i - bombRange - 1; col--) {
+
+                int currentPos = level.getCell(j, col);
+                int rightPos = level.getCell(j + 1, col);
+                int leftPos = level.getCell(j - 1, col);
+                if (currentPos != 0) {
+                   return false;
+                }
+                else if(rightPos == 0 || leftPos == 0){
+                    //  log.info("dir " + move + " is right-left safe, for position [" + i + ", " + j + "]");
+                    return true;
+                }
+            }
+        }
+        else if(move == 2) {
+            for (int col = i + 1; col <= i + bombRange + 1; col++) {
+
+                int currentPos = level.getCell(j, col);
+                int rightPos = level.getCell(j + 1, col);
+                int leftPos = level.getCell(j - 1, col);
+                if (currentPos != 0) {
+                    return false;
+                }
+                else if(rightPos == 0 || leftPos == 0){
+                    //  log.info("dir " + move + " is safe, for position [" + i + ", " + j + "]");
+                    return true;
+                }
+            }
+        }
+        else if(move == 0) {
+            for (int row = j - 1; row >= j - bombRange - 1; row--) {
+
+                int currentPos = level.getCell(row, i);
+                int upPos = level.getCell(row, i + 1);
+                int downPos = level.getCell(row, i - 1 );
+                if (currentPos != 0) {
+                    return false;
+                }
+                else if(downPos == 0 || upPos == 0){
+                    //  log.info("dir " + move + " is safe, for position [" + i + ", " + j + "]");
+                    return true;
+                }
+            }
+        }
+        else if(move == 1) {
+            for (int row = j + 1; row <= j + bombRange + 1; row++) {
+
+                int currentPos = level.getCell(row, i);
+                int upPos = level.getCell(row, i + 1);
+                int downPos = level.getCell(row, i - 1 );
+                if (currentPos != 0) {
+                    return false;
+                }
+                else if(downPos == 0 || upPos == 0){
+                    //  log.info("dir " + move + " is safe, for position [" + i + ", " + j + "]");
+                    return true;
+                }
+            }
+        }
+        //  log.info("dir " + move + " is safe, for position [" + i + ", " + j + "]");
+        return true;
     }
 
     @Override
@@ -200,8 +310,10 @@ public class Player extends Sprite {
             int move = 0;
             int mode = 0;
 
-            int currentGoalX = goalX;
-            int currentGoalY = goalY;
+            if(powerUpFree) {
+                currentGoalX = goalX;
+                currentGoalY = goalY;
+            }
 
             log.info("count bomb: " + count);
 
@@ -209,16 +321,27 @@ public class Player extends Sprite {
                 mode = 1;
                 log.info("can't hit");
             }
-            if (count > 0 && count <= this.bombCountLimit && (playerX!=bombGoalX || playerY!=bombGoalY)){
+            else if (count > 0 && count <= this.bombCountLimit && (playerX!=bombGoalX || playerY!=bombGoalY)){
                 currentGoalX = bombGoalX;
                 currentGoalY = bombGoalY;
                 log.info("bomb goal");
             }
+            else if(doorLocked) {
+                mode = 3;
+            }
+            /*if (count > 0 && count <= this.bombCountLimit && (playerX!=bombGoalX || playerY!=bombGoalY)){
+                currentGoalX = bombGoalX;
+                currentGoalY = bombGoalY;
+                log.info("bomb goal");
+            }*/
 
 
-            log.info("current goal x: " + currentGoalX +", current goal y: " + currentGoalY);
+
+
+            log.info("CURRENT goal x: " + currentGoalX +", CURRENT goal y: " + currentGoalY);
             log.info("current bombgoal x: " + bombGoalX +", current bombgoal y: " + bombGoalY);
             log.info("current player x: " + playerX +", current player y: " + playerY);
+            log.info("powerup free: " + powerUpFree);
 
             ArrayList<Action> actions = new ArrayList<>();
             ArrayList<Wall> walls = new ArrayList<>();
@@ -228,15 +351,19 @@ public class Player extends Sprite {
 
             for( int i = 0; i < 4; i++ ){
                 if (can_move[i]) {
-                    actions.add(new Action(i));
+                    if (mode != 1 || checkSafe(i))
+                        actions.add(new Action(i));
                     walls.add(new Wall(i, 0));
                 }
                 else if (can_destroy[i]){
                     walls.add(new Wall(i, 1));
-                    actions.add(new Action(i));
+                    if (mode != 1 || checkSafe(i))
+                        actions.add(new Action(i));
                 }
             }
-            actions.add(new Action(4));
+            if(sqrt(pow((playerX - bombGoalX), 2)+pow((playerY - bombGoalY), 2)) > bombRange ||
+                mode != 1 || (playerX != bombGoalX && playerY != bombGoalY))
+                actions.add(new Action(4));
 
             ai.load_fact(   new Position(playerX, playerY),
                             actions,
@@ -290,6 +417,11 @@ public class Player extends Sprite {
             enemyX = 0;
             ai.clear();
         }
+        else{
+            playerX = this.x/40;
+            playerY = this.y/40;
+        }
+
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)&&can_move[0]) {
             set_allCan_move(0, true);
@@ -309,8 +441,17 @@ public class Player extends Sprite {
         }
         if (Gdx.input.isKeyPressed((Input.Keys.Z)) && can_hit) {
             can_hit = false;
+            this.bombX=playerX;
+            this.bombY=playerY;
+            this.bombGoalX=playerX;
+            this.bombGoalY=playerY;
+            bombPlaced++;
         }
 
+    }
+
+    private boolean checkSafe(int i) {
+        return dirSafe[i];
     }
 
     private ArrayList<Double> buildDistances(final int goalX, final int goalY){

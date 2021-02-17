@@ -124,17 +124,27 @@ public class MyGdxGame extends ApplicationAdapter {
 				}
 
 			}
-			for (PowerUp powerUp : level.getPowerUps()) {
-				powerUp.draw(batch);
-				if(player.collision(powerUp.getHitbox())){
-					player.dropPowerUp(powerUp);
-					log.info("powerUpDropped");
-					level.setDoorLocked(player.isDoorLocked());
-					level.setBombRange(player.getBombRange());
-					sprites.set(0, player);
-					dead_sprite.add(powerUp);
+			if(player != null && level.getPowerUps().isEmpty())
+				player.setPowerUpFree(true);
+			else if (player != null){
+
+				player.setPowerUpFree(false);
+				player.setCurrentGoalX(level.getPowerUps().get(0).getX()/40);
+				player.setCurrentGoalY(level.getPowerUps().get(0).getY()/40);
+
+				for (PowerUp powerUp : level.getPowerUps()) {
+					powerUp.draw(batch);
+					if(player.collision(powerUp.getHitbox())){
+						player.dropPowerUp(powerUp);
+						log.info("powerUpDropped");
+						level.setDoorLocked(player.isDoorLocked());
+						level.setBombRange(player.getBombRange());
+						sprites.set(0, player);
+						dead_sprite.add(powerUp);
+					}
 				}
 			}
+
 			if(!dead_sprite.isEmpty())
 				for(Sprite sprite : dead_sprite)
 					if(!sprites.remove(sprite))

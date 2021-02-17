@@ -50,8 +50,6 @@ public class Bomb extends Sprite {
             hitBoxes.add(new Hitbox(x, y + (i * 40)));
             hitBoxes.add(new Hitbox(x, y - (i * 40)));
         }
-        for (Hitbox hit : hitBoxes)
-            log.info("current hit x: " + hit.getX() + "current hit y:" + hit.getY());
         super.setX(x);
         super.setY(y);
     }

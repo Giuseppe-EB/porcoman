@@ -12,6 +12,7 @@ end(18, 8).
 %                    0 GOAL
 %                    1 BOMB
 %                    2 ENEMY
+%                    3 SEARCH
 %
 %       move:
 %                    0 LEFT
@@ -19,12 +20,14 @@ end(18, 8).
 %                    2 UP
 %                    3 DOWN
 %                    4 BOMB
-
+%
 % dist( X, Y) === > Y = distanza dalla fine se mossa X
 % wall( X, 0) == > muro assente a X
 % wall( X, 1) == > muro distruttibile a X
-% wall( X, 2) == > muro indistruttibile a X
+% wall( X, 2) == > bomba a X
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 choice(M)|not_choice(M):- move(M).
 :- #count{M:choice(M)}<1.
 
@@ -46,19 +49,17 @@ choice(M)|not_choice(M):- move(M).
 
 :~ mode(1), bomb_dist(X, Y), choice(X). [4-Y @ 1]
 
-    % torna indietro al sicuro
 
-    :~ mode(1), dist(X, Y), choice(X). [4-Y @ 1]
+% mode SEARCH vai verso l'obiettivo, ma dai priorità a distruggere i blocchi (quindi cerca la chiave)
 
+:~ mode(3), dist(X, Y), choice(X). [Y @ 1]
 
-%:~ bomb_dist(X, Y), choice(X), X!=4. [-Y @ 5]
+    % se la cella più vicina è dietro ad un muro distruttibile piazza la bomba
 
-%:~ enemy_dist(X, Y), choice(X). [Y @ 4]
-%:- enemy_dist(X, Y), choice(X) X!=4.
-%:- enemy_dist(X, Y), choice(X).
-%:~ enemy_dist(X, Y), choice(X). [Y @ 4]
+    :~ mode(3), dist(X, 0), wall(X, 1), choice(Y), Y!=4. [3 @ 1]
 
-%:~ choice(4), #count{Y:wall(X, Y)}<1, Y=1. [1 @ 3]
+    :~ mode(3), wall( _ , 1), choice(Y), Y!=4. [2 @ 1]
+
 
 :- choice(X), wall(X, 1).
 

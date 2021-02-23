@@ -43,7 +43,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		this.input = new MouseInput(cam);
 		try {
 			sprites.add(new Player());
-			sprites.add(new Nemico());
+			sprites.add(new Nemico(320, 200, 7, 13, 5, 2));
+			sprites.add(new Nemico(240,280,3,7,7,9));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -77,10 +78,8 @@ public class MyGdxGame extends ApplicationAdapter {
 			level.draw(batch);
 
 
-
-
 			if (player!=null&&player.isAi_hit()||Gdx.input.isKeyPressed((Input.Keys.Z)) && player.isCan_hit()) {
-				sprites.add(new Bomb(player.getX(), player.getY(), player.getBombRange()));
+				sprites.add(new Bomb(player.getX(), player.getY(), player.getBombRange(), level));
 				level.add_bomb(player.getX() / 40, player.getY() / 40);
 
 			}
@@ -109,15 +108,17 @@ public class MyGdxGame extends ApplicationAdapter {
 
 					}
 					else if(sprite.getClass()==Nemico.class){
+						player.setEnemyClean(false);
 						sprite.update(sprites.get(0).getX(), sprites.get(0).getY());
 						for(Sprite sprite2 : sprites)
 							if(sprite2.getClass()==Bomb.class&&sprite2.collision(sprite.getHitbox())) {
+								player.setEnemyClean(true);
 								sprite.setAlive(false);
 								dead_sprite.add(sprite);
 								break;
 							}
 							else if(sprite2.getClass()==Player.class)
-								sprite2.update(sprite.getX(), sprite.getY());
+								player.update(sprite.getX(), sprite.getY(), sprite.toString());
 
 					}
 
@@ -152,6 +153,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 
 
+
 		}
 		if(!start && (Gdx.input.isTouched()))
 			start=true;
@@ -161,6 +163,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.R)) {
 			this.restart();
 		}
+
 	}
 
 	@Override

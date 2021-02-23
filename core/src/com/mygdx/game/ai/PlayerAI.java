@@ -45,6 +45,7 @@ public class PlayerAI {
                           ArrayList<BombDistance> bomb_dists,
                           ArrayList<EnemyDistance> enemy_dists,
                           ArrayList<Wall> walls,
+                          ArrayList<EnemyPath> enemyPaths,
                           Mode mode)
             throws Exception {
         input.addObjectInput(pos);
@@ -60,6 +61,9 @@ public class PlayerAI {
         if(!walls.isEmpty())
             for(Wall wall : walls)
                 input.addObjectInput(wall);
+        if(!enemyPaths.isEmpty())
+            for(EnemyPath path : enemyPaths)
+                input.addObjectInput(path);
         handler.addProgram(input);
     }
 

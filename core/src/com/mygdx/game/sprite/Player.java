@@ -23,6 +23,9 @@ public class Player extends Sprite {
 
     private boolean doorLocked = true;
     private boolean powerUpFree = true;
+    private boolean enemyClean = true;
+
+    private String enemy = null;
 
     public boolean isPowerUpFree() {
         return powerUpFree;
@@ -62,6 +65,7 @@ public class Player extends Sprite {
     private static int BOMB = 998;
     private static int ENEMY = 997;
 
+
     private int bombRange = 1;
 
     public int getBombRange() {
@@ -84,6 +88,7 @@ public class Player extends Sprite {
     private int currentGoalY;
 
     private boolean[] dirSafe;
+    private boolean[] enemyFree;
 
     private boolean[] can_destroy;
     private int count ;
@@ -91,8 +96,8 @@ public class Player extends Sprite {
     private PlayerAI ai;
     private int playerX = 1;
     private int playerY = 10;
-    private int enemyX= 10;
-    private int enemyY=10;
+    private int enemyX;
+    private int enemyY;
     private int bombX;
     private int bombY;
     private int bombGoalX = 0;
@@ -100,6 +105,14 @@ public class Player extends Sprite {
     private boolean go_ia = false;
     private int ia_count = 0;
 
+
+    public boolean isEnemyClean() {
+        return enemyClean;
+    }
+
+    public void setEnemyClean(boolean enemyClean) {
+        this.enemyClean = enemyClean;
+    }
 
     public boolean isAi_hit() {
         boolean temp = ai_hit;
@@ -150,14 +163,15 @@ public class Player extends Sprite {
         super("stupid.png");
         this.x = 50;
         this.y = 140;
-        this.enemyX = x/40;
-        this.enemyY = y/40;
+        this.enemyX = 100;
+        this.enemyY = 100;
         can_hit = true;
         count=0;
         System.out.println("porcodio");
         ai = new PlayerAI();
         can_destroy = new boolean[]{false, false, false, false};
         dirSafe = new boolean[]{false, false, false, false};
+        enemyFree = new boolean[]{true, true, true, true};
     }
     @Override
     public void update(Level level) {
@@ -193,16 +207,47 @@ public class Player extends Sprite {
         else
             can_destroy[3] = false;
 
-        if(bombGoalX == playerX && bombGoalY == playerY)
+        if(sqrt(pow((playerX - bombGoalX), 2) +
+                pow((playerY - bombGoalY), 2)) <= bombRange)
             for (int i = 0; i < 4; i++){
-                dirSafe[i] = analyzeSafe(currentY, currentX, level, i);
+                if (can_move[i])
+                    dirSafe[i] = analyzeSafe(currentY, currentX, level, i);
             }
         else
             for (int i = 0; i < 4; i++){
                 dirSafe[i] = true;
             }
+        for (int i = 0; i < 4; i++){
+            enemyFree[i] = analyzeEnemy(currentX, currentY, i);
+        }
+
 
     }
+
+    private boolean analyzeEnemy(int currentX, int currentY, int i) {
+        switch (i) {
+            case 0:
+                if (currentY == enemyY && currentX > enemyX)
+                    return false;
+                break;
+            case 1:
+                if (currentY == enemyY && currentX < enemyX)
+                    return false;
+                break;
+            case 2:
+                if (currentX == enemyX && currentY < enemyY)
+                    return false;
+                break;
+            case 3:
+                if (currentX == enemyX && currentY > enemyY)
+                    return false;
+                break;
+            default:
+                return false;
+        }
+        return true;
+    }
+
     private boolean analyzeSafe(int i, int j, Level level, int move){
 
 
@@ -272,8 +317,28 @@ public class Player extends Sprite {
 
     @Override
     public void update(int x, int y) {
-        this.enemyX = x/40;
-        this.enemyY = y/40;
+            this.enemyX = x / 40;
+            this.enemyY = y / 40;
+
+    }
+
+    public void update(int x, int y, String enemy) {
+        if(this.enemy != null) {
+            double enemyDist = sqrt(pow((playerX - enemyX), 2) + pow((playerY - enemyY), 2));
+            if (!this.enemy.equalsIgnoreCase(enemy) &&
+                    enemyDist > sqrt(pow((playerX - x / 40), 2) + pow((playerY - y / 40), 2))) {
+                log.info("NEMICO SETTAto: [" + x / 40 + ", " + y / 40 + "] ");
+                this.enemyX = x / 40;
+                this.enemyY = y / 40;
+            }
+            else if(this.enemy.equalsIgnoreCase(enemy)){
+                this.enemyX = x / 40;
+                this.enemyY = y / 40;
+            }
+
+        }
+        else
+            this.enemy = enemy;
     }
 
     /*
@@ -317,6 +382,17 @@ public class Player extends Sprite {
 
             log.info("count bomb: " + count);
 
+            double enemyDist = sqrt(pow((playerX - enemyX), 2)+pow((playerY - enemyY), 2));
+            if(enemyDist < 7 && !enemyClean){
+                if(enemyDist <= bombRange)
+                    mode = 2;
+                else{
+                    currentGoalX = enemyX;
+                    currentGoalY = enemyY;
+                }
+
+            }
+
             if (!can_hit) {
                 mode = 1;
                 log.info("can't hit");
@@ -339,12 +415,14 @@ public class Player extends Sprite {
 
 
             log.info("CURRENT goal x: " + currentGoalX +", CURRENT goal y: " + currentGoalY);
-            log.info("current bombgoal x: " + bombGoalX +", current bombgoal y: " + bombGoalY);
-            log.info("current player x: " + playerX +", current player y: " + playerY);
+            log.info("CURRENT bombgoal x: " + bombGoalX +", current bombgoal y: " + bombGoalY);
+            log.info("CURRENT player x: " + playerX +", current player y: " + playerY);
             log.info("powerup free: " + powerUpFree);
+            log.info("CURRENT ENEMY: [" + enemyX + ", " + enemyY + "] ");
 
             ArrayList<Action> actions = new ArrayList<>();
             ArrayList<Wall> walls = new ArrayList<>();
+            ArrayList<EnemyPath> enemyPaths = new ArrayList<>();
 
             playerX = this.x/40;
             playerY = this.y/40;
@@ -360,6 +438,12 @@ public class Player extends Sprite {
                     if (mode != 1 || checkSafe(i))
                         actions.add(new Action(i));
                 }
+                if ( !enemyFree[i] && enemyDist > bombRange)
+                    enemyPaths.add(new EnemyPath(i, 1));
+                else if( !enemyFree[i] && enemyDist <= bombRange && (playerX == enemyX || playerY == enemyY))
+                    enemyPaths.add(new EnemyPath(i, 2));
+                else
+                    enemyPaths.add(new EnemyPath(i, 0));
             }
             if(sqrt(pow((playerX - bombGoalX), 2)+pow((playerY - bombGoalY), 2)) > bombRange ||
                 mode != 1 || (playerX != bombGoalX && playerY != bombGoalY))
@@ -371,6 +455,7 @@ public class Player extends Sprite {
                             makeBombDistances(buildDistances(bombX, bombY)),
                             makeEnemyDistances(buildDistances(enemyX, enemyY)),
                             walls,
+                            enemyPaths,
                             new Mode(mode)
             );
 
@@ -413,8 +498,6 @@ public class Player extends Sprite {
                 this.bombGoalY=playerY;
                 bombPlaced++;
             }
-            enemyY = 0;
-            enemyX = 0;
             ai.clear();
         }
         else{

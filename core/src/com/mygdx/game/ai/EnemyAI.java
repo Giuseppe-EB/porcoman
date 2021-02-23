@@ -20,10 +20,10 @@ public class EnemyAI {
         path = "./desktop/build/resources/main/dlv2.exe";
         //path = "/core/libs/dlv2.exe";
         dlv_input = "./desktop/build/resources/main/input_enemy.dlv";
-        System.out.println(dlv_input);
+        //System.out.println(dlv_input);
         //dlv_input = "input_player.dlv";
         String current = new java.io.File( "." ).getCanonicalPath();
-        System.out.println("Current dir:"+current);
+        //System.out.println("Current dir:"+current);
         handler = new DesktopHandler(new DLV2DesktopService(path));
         input = new ASPInputProgram();
         input.addFilesPath(dlv_input);
@@ -51,16 +51,16 @@ public class EnemyAI {
     }
     public AnswerSets getAnswerSets() throws Exception {
         Output o = handler.startSync();
-        try {
+        /*try {
             for(int i=0; ; i++){
                 System.out.println("input dlv = " + handler.getInputProgram(i).getPrograms());
-            }}catch (Exception ignore){}
+            }}catch (Exception ignore){}*/
         if (((AnswerSets) o).getAnswersets().size() == 0) {
             throw new Exception("NO ANSWERSET!");
         }
-        for (AnswerSet an : ((AnswerSets) o).getAnswersets()) {
-            System.out.println("output = " + an.getAnswerSet());
-        }
+        /*for (AnswerSet an : ((AnswerSets) o).getAnswersets()) {
+            //System.out.println("output = " + an.getAnswerSet());
+        }*/
 
         return (AnswerSets) o;
 

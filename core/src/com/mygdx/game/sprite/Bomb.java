@@ -39,19 +39,44 @@ public class Bomb extends Sprite {
 
     }
 
-    public Bomb(int x, int y, int bombRange) {
+    public Bomb(int x, int y, int bombRange, Level level) {
         super("bombs.png");
         alive = true;
         this.bombRange = bombRange;
         hitBoxes =  new ArrayList<Hitbox>();
-        for(int i = 1; i <= bombRange; i++) {
-            hitBoxes.add(new Hitbox(x + (i * 40), y));
-            hitBoxes.add(new Hitbox(x - (i * 40), y));
-            hitBoxes.add(new Hitbox(x, y + (i * 40)));
-            hitBoxes.add(new Hitbox(x, y - (i * 40)));
-        }
         super.setX(x);
         super.setY(y);
+        boolean [] dirClean = {true, true, true, true};
+        for(int i = 1; i <= bombRange; i++) {
+            if(dirClean[1]) {
+                if (level.getCell(super.getX() / 40 + i, super.getY() / 40) != 11 &&
+                        level.getCell(super.getX() / 40 + i, super.getY() / 40) != 1)
+                    hitBoxes.add(new Hitbox(x + (i * 20 + 20), y));
+                else
+                    dirClean[1] = false;
+            }
+            if(dirClean[0]) {
+                if (level.getCell(super.getX() / 40 - i, super.getY() / 40) != 11 &&
+                        level.getCell(super.getX() / 40 - i, super.getY() / 40) != 1)
+                    hitBoxes.add(new Hitbox(x - (i * 20 + 20), y));
+                else
+                    dirClean[0] = false;
+            }
+            if(dirClean[2]) {
+                if (level.getCell(super.getX() / 40 , super.getY() / 40 + i) != 11 &&
+                        level.getCell(super.getX() / 40 , super.getY() / 40 + i) != 1)
+                    hitBoxes.add(new Hitbox(x, y + (i * 20 + 20)));
+                else
+                    dirClean[2] = false;
+            }
+            if(dirClean[3]) {
+                if (level.getCell(super.getX() / 40 , super.getY() / 40 - i) != 11 &&
+                        level.getCell(super.getX() / 40 , super.getY() / 40 - i) != 1)
+                    hitBoxes.add(new Hitbox(x, y - (i * 20 + 20)));
+                else
+                    dirClean[3] = false;
+            }
+        }
     }
 
     @Override

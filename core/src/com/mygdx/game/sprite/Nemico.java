@@ -10,6 +10,7 @@ import it.unical.mat.embasp.languages.asp.AnswerSets;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,6 +19,13 @@ import static java.lang.Math.sqrt;
 import static java.lang.StrictMath.round;
 
 public class Nemico extends Sprite {
+
+    private static Logger log= Logger.getLogger("log");
+
+    private int goalX1;
+    private int goalX2;
+    private int goalY1;
+    private int goalY2;
 
     private int direction;
     private int right =0;
@@ -31,6 +39,7 @@ public class Nemico extends Sprite {
         this.player_x = x/40;
         this.player_y = y/40;
     }
+
     public int getPlayer_x() {
         return player_x;
     }
@@ -51,17 +60,32 @@ public class Nemico extends Sprite {
 
     private EnemyAI ai;
 
-    private int P2_x = 8;
-    private int P2_y = 8;
+    private int P2_x ;
+    private int P2_y ;
 
     public Nemico() throws IOException {
         super("nemico_queg.png");
-        x = 400;
-        y = 400;
+        x = 320;
+        y = 200;
         direction = 0;
         texture_2 = new Texture("nemico_queg2.png");
         ai= new EnemyAI();
 
+    }
+
+    public Nemico(int x, int y, int goalX1, int goalX2, int goalY1, int goalY2) throws IOException {
+        super("nemico_queg.png");
+        this.x = x;
+        this.y = y;
+        this.goalX1 = goalX1;
+        this.goalX2 = goalX2;
+        this.goalY1 = goalY1;
+        this.goalY2 = goalY2;
+        P2_x = goalX1;
+        P2_y = goalY1;
+        direction = 0;
+        texture_2 = new Texture("nemico_queg2.png");
+        ai= new EnemyAI();
     }
 
     @Override
@@ -92,7 +116,6 @@ public class Nemico extends Sprite {
             }
             */
         if(Gdx.input.isKeyJustPressed(Input.Keys.E)){
-            System.out.println("CIAOOOOO");
             go_ia=!go_ia;
         }
         if(go_ia){
@@ -105,32 +128,29 @@ public class Nemico extends Sprite {
             boolean trovato = false;
             ArrayList<Action> actions = new ArrayList<>();
             ArrayList<Distance> dists = new ArrayList<>();
-            //ArrayList<BombDistance> bomb_dists = new ArrayList<>();
-
-//          distanza tra due punti : d( P1, P2) = sqrt((x2 - x1)^2+(y2-y1)^2)
+            //  ArrayList<BombDistance> bomb_dists = new ArrayList<>();
 
 
             int P1_x = this.x / 40;
             int P1_y = this.y / 40;
             int dist = (int) round(10 * sqrt(pow((P1_x - player_x), 2) + pow((P1_y - player_y), 2)));
-            if(dist<100){
-                P2_x = player_x;
-                P2_y = player_y;
-            }
-            else if(P2_y > 8 || P2_x > 8 ){
-                P2_x = 8;
-                P2_y = 8;
-            }
+
+            //  log.info(this.toString());
+
+            //  log.info("CURRENT POSITION: [" + P1_x + ", " + P1_y + "] ");
+            //  log.info("CURRENT GOAL: [" + P2_x + ", " + P2_y + "] ");
 
             if (P1_x == P2_x && P1_y == P2_y) {
-                if (P2_x == 1&&P2_y==1)
-                    P2_x = 8;
-                else if (P2_x == 8 &&P2_y == 1)
-                    P2_y = 8;
-                else if (P2_x == 8 && P2_y == 8)
-                    P2_x = 1;
-                else if (P2_x == 1 && P2_y == 8)
-                    P2_y = 1;
+                //  log.info("CURRENT GOAL1: [" + goalX1 + ", " + goalY1 + "] ");
+                //  log.info("CURRENT GOAL2: [" + goalX2 + ", " + goalY2 + "] ");
+                if(P2_x == goalX2 && P2_y == goalY2 ){
+                    P2_x = goalX1;
+                    P2_y = goalY1;
+                }
+                else if(P2_x == goalX1 && P2_y == goalY1){
+                    P2_x = goalX2;
+                    P2_y = goalY2;
+                }
             }
 
 
@@ -164,7 +184,7 @@ public class Nemico extends Sprite {
                     matcher = pattern.matcher(atom);
 
                     if (!trovato&&matcher.find()) {
-                        System.out.println(matcher.group(1));
+                    //    System.out.println(matcher.group(1));
                         move = Integer.parseInt(matcher.group(1));
                     }
 

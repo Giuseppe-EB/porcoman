@@ -1,12 +1,6 @@
-%move(0..3).
-%move(1).
-%move(3).
-%position(0, 1).
-%mode(0).
-end(18, 8).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%LEGEND:
+%
+%   LEGEND:
 %
 %       mode:
 %                    0 GOAL
@@ -21,10 +15,16 @@ end(18, 8).
 %                    3 DOWN
 %                    4 BOMB
 %
-% dist( X, Y) === > Y = distanza dalla fine se mossa X
-% wall( X, 0) == > muro assente a X
-% wall( X, 1) == > muro distruttibile a X
-% wall( X, 2) == > bomba a X
+%   dist( X, Y) === > Y = distanza dalla fine se mossa X
+%   wall( X, 0) == > muro assente a X
+%   wall( X, 1) == > muro distruttibile a X
+%   wall( X, 2) == > bomba a X
+%   enemyPath( X, 0) == > direzione X libera
+%   enemyPath( X, 1) == > nemico in direzione X
+%   enemyPath( X, 2) == > nemico colpibile in direzione X
+%
+%
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -34,34 +34,52 @@ choice(M)|not_choice(M):- move(M).
 
 
 
-% distanza tra due punti : d( P1, P2) = sqrt((x2 - x1)^2+(y2-y1)^2)
+%   distanza tra due punti : d( P1, P2) = sqrt((x2 - x1)^2+(y2-y1)^2)
 
 
-% mode GOAL scegli la cella più vicina all'obiettivo
+%   mode GOAL scegli la cella più vicina all'obiettivo
 
 :~ mode(0), dist(X, Y), choice(X). [Y @ 1]
 
-    % se la cella più vicina è dietro ad un muro distruttibile piazza la bomba
+    %   se la cella più vicina è dietro ad un muro distruttibile piazza la bomba
 
-    :~ mode(0), dist(X, 0), wall(X, 1), choice(Y), Y!=4. [3 @ 1]
+    :~ mode(0), dist(X, 0), wall(X, 1), choice(Y), Y!=X, Y!=4. [3 @ 1]
 
-% mode BOMB scegli la cella più lontana dalla bomba
+%   mode BOMB scegli la cella più lontana dalla bomba
 
-:~ mode(1), bomb_dist(X, Y), choice(X). [4-Y @ 1]
+:~ mode(1), bomb_dist(X, Y), choice(X). [4-Y @ 2]
+
+    % non scappare verso il nemico
+
+    :~ mode(1), choice(X), enemyPath(X, 1). [1 @ 1]
 
 
-% mode SEARCH vai verso l'obiettivo, ma dai priorità a distruggere i blocchi (quindi cerca la chiave)
+%   mode SEARCH vai verso l'obiettivo, ma dai priorità a distruggere i blocchi (quindi cerca la chiave)
+
+:~ mode(2), enemy_dist(X, Y), choice(X). [Y @ 1]
+
+    %   se il nemico è in dietro un muro distruttibile piazza la bomba
+
+    :~ mode(2), enemyPath( X, 1), wall(X, 1), choice(Y), Y!=4. [2 @ 1]
+
+    %   se puoi colpisci il nemico
+
+    :~ mode(2), enemyPath( X, 2), choice(Y), Y!=4. [1 @ 2]
+
 
 :~ mode(3), dist(X, Y), choice(X). [Y @ 1]
 
-    % se la cella più vicina è dietro ad un muro distruttibile piazza la bomba
+    %   se la cella più vicina è dietro ad un muro distruttibile piazza la bomba
 
     :~ mode(3), dist(X, 0), wall(X, 1), choice(Y), Y!=4. [3 @ 1]
 
     :~ mode(3), wall( _ , 1), choice(Y), Y!=4. [2 @ 1]
 
+%   mode ENEMY vai verso il nemico finchè non lo puoi colpire
+
 
 :- choice(X), wall(X, 1).
+:- choice(X), enemyPath(X, 2).
 
 
 

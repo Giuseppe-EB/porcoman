@@ -20,7 +20,9 @@ public class Key extends PowerUp {
         }
         return instance;
     }
-
+    public void nextLivello(){
+        instance=null;
+    }
     @Override
     public void action() throws Exception {
 

@@ -35,6 +35,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	//private Player player;
 	private ArrayList<Sprite> sprites;
 	public static MouseInput input;
+	private int nLevel=1;
 	@Override
 	public void create () {
 		sprites = new ArrayList<>();
@@ -61,6 +62,32 @@ public class MyGdxGame extends ApplicationAdapter {
 
 		this.create();
 
+	}
+	public void nuovoLivello(){
+		nLevel++;
+		sprites = new ArrayList<>();
+
+		this.cam = new OrthographicCamera();
+		this.input = new MouseInput(cam);
+		try {
+			sprites.add(new Player());
+			switch (nLevel)
+			{
+				case 2:
+					sprites.add(new Nemico(300,200,300,400));
+					break;
+				default:
+					sprites.add(new Nemico());
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		cam.setToOrtho(false, this.width, this.height);
+		this.view = new StretchViewport(this.width, this.height);
+		this.stage = new Stage(view);
+		batch = new SpriteBatch();
 	}
 	@Override
 	public void render () {
@@ -160,6 +187,18 @@ public class MyGdxGame extends ApplicationAdapter {
 
 
 		batch.end();
+		for (Sprite sprite : sprites) {
+			if(sprite.getClass() == Player.class) {
+				if (((Player) sprite).isCambiolivello()) {
+					((Player) sprite).setCambiolivello(false);
+					Key.getInstance(0,0).nextLivello();
+					level.setDoorLocked(true);
+					level.setPorta("chiusa.png");
+					this.nuovoLivello();
+
+				}
+			}
+		}
 		if(Gdx.input.isKeyJustPressed(Input.Keys.R)) {
 			this.restart();
 		}

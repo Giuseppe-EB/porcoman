@@ -49,6 +49,7 @@ public class Level {
 
     public void setCsvFile(String csvFile) {
         switch_level = true;
+        powerUps.clear();
         this.csvFile = csvFile;
     }
 
@@ -60,6 +61,9 @@ public class Level {
     private Texture porta= new Texture("chiusa.png");
     private Texture ind_wall = new Texture("wall_2.png");
 
+    public void setPorta(String s) {
+        this.porta = new Texture(s);
+    }
 
     private static Level level;
     private int bomb_count;

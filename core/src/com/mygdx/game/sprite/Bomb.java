@@ -82,7 +82,23 @@ public class Bomb extends Sprite {
         count++;
         if(count==80) {
             explosion = true;
-            this.texture = new Texture("BombermanEffect1.png");
+            switch (bombRange) {
+                case 1:
+                    this.texture = new Texture("BombermanEffect1.png");
+                    break;
+                case 2:
+                    this.texture= new  Texture("esplosione2.png");
+                    break;
+                case 3:
+                    this.texture= new  Texture("Esplosione3.png");
+                    break;
+                case 4:
+                    this.texture= new  Texture("esplosione4.png");
+                    break;
+                default:
+                    this.texture = new Texture("BombermanEffect1.png");
+
+            }
         }
         if(count==100) {
             explosion = false;
@@ -103,6 +119,23 @@ public class Bomb extends Sprite {
         if(!explosion)
             batch.draw(this.texture, this.x, this.y);
         else
-            batch.draw(this.texture, this.x-40, this.y-40);
+            switch (bombRange) {
+                case 1:
+                    batch.draw(this.texture, this.x-40, this.y-40);
+                    break;
+                case 2:
+                    batch.draw(this.texture, this.x-60, this.y-60);
+                    break;
+                case 3:
+                    batch.draw(this.texture, this.x-80, this.y-80);
+                    break;
+                case 4:
+                    batch.draw(this.texture, this.x-100, this.y-100);
+                    break;
+                default:
+                    batch.draw(this.texture, this.x-40, this.y-40);
+
+            }
+
     }
 }

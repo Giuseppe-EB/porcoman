@@ -51,28 +51,28 @@ public class Bomb extends Sprite {
             if(dirClean[1]) {
                 if (level.getCell(super.getX() / 40 + i, super.getY() / 40) != 11 &&
                         level.getCell(super.getX() / 40 + i, super.getY() / 40) != 1)
-                    hitBoxes.add(new Hitbox(x + (i * 20 + 20), y));
+                    hitBoxes.add(new Hitbox(x + (i * 40), y));
                 else
                     dirClean[1] = false;
             }
             if(dirClean[0]) {
                 if (level.getCell(super.getX() / 40 - i, super.getY() / 40) != 11 &&
                         level.getCell(super.getX() / 40 - i, super.getY() / 40) != 1)
-                    hitBoxes.add(new Hitbox(x - (i * 20 + 20), y));
+                    hitBoxes.add(new Hitbox(x - (i * 40), y));
                 else
                     dirClean[0] = false;
             }
             if(dirClean[2]) {
                 if (level.getCell(super.getX() / 40 , super.getY() / 40 + i) != 11 &&
                         level.getCell(super.getX() / 40 , super.getY() / 40 + i) != 1)
-                    hitBoxes.add(new Hitbox(x, y + (i * 20 + 20)));
+                    hitBoxes.add(new Hitbox(x, y + (i * 40)));
                 else
                     dirClean[2] = false;
             }
             if(dirClean[3]) {
                 if (level.getCell(super.getX() / 40 , super.getY() / 40 - i) != 11 &&
                         level.getCell(super.getX() / 40 , super.getY() / 40 - i) != 1)
-                    hitBoxes.add(new Hitbox(x, y - (i * 20 + 20)));
+                    hitBoxes.add(new Hitbox(x, y - (i * 40)));
                 else
                     dirClean[3] = false;
             }
@@ -108,9 +108,6 @@ public class Bomb extends Sprite {
         if(count==80) {
             explosion = true;
             switch (bombRange) {
-                case 1:
-                    this.texture = new Texture("BombermanEffect1.png");
-                    break;
                 case 2:
                     this.texture= new  Texture("esplosione2.png");
                     break;
@@ -145,17 +142,14 @@ public class Bomb extends Sprite {
             batch.draw(this.texture, this.x, this.y);
         else
             switch (bombRange) {
-                case 1:
-                    batch.draw(this.texture, this.x-40, this.y-40);
-                    break;
                 case 2:
-                    batch.draw(this.texture, this.x-60, this.y-60);
-                    break;
-                case 3:
                     batch.draw(this.texture, this.x-80, this.y-80);
                     break;
+                case 3:
+                    batch.draw(this.texture, this.x-120, this.y-120);
+                    break;
                 case 4:
-                    batch.draw(this.texture, this.x-100, this.y-100);
+                    batch.draw(this.texture, this.x-160, this.y-160);
                     break;
                 default:
                     batch.draw(this.texture, this.x-40, this.y-40);

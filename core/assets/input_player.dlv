@@ -52,11 +52,12 @@ choice(M)|not_choice(M):- move(M).
     % non scappare verso il nemico
 
     :~ mode(1), choice(X), enemyPath(X, 1). [1 @ 1]
+    :~ mode(1), enemy_dist(X, Y), choice(X). [4-Y @ 1]
 
 
 %   mode SEARCH vai verso l'obiettivo, ma dai priorità a distruggere i blocchi (quindi cerca la chiave)
 
-:~ mode(2), enemy_dist(X, Y), choice(X). [Y @ 1]
+%:~ mode(2), enemy_dist(X, Y), choice(X). [Y @ 1]
 
     %   se il nemico è in dietro un muro distruttibile piazza la bomba
 

@@ -74,7 +74,7 @@ public class MyGdxGame extends ApplicationAdapter {
 			switch (nLevel)
 			{
 				case 2:
-					sprites.add(new Nemico(300,200,300,400));
+					sprites.add(new Nemico());
 					break;
 				default:
 					sprites.add(new Nemico());

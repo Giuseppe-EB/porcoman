@@ -99,7 +99,16 @@ public class Player extends Sprite {
     private int bombGoalY = 0;
     private boolean go_ia = false;
     private int ia_count = 0;
+    private boolean cambiolivello=false;
+    private int nLevel=1;
 
+    public boolean isCambiolivello() {
+        return cambiolivello;
+    }
+
+    public void setCambiolivello(boolean cambiolivello) {
+        this.cambiolivello = cambiolivello;
+    }
 
     public boolean isAi_hit() {
         boolean temp = ai_hit;
@@ -168,7 +177,25 @@ public class Player extends Sprite {
         if(level.getCell(currentX, currentY ) == 10 && !doorLocked){
 
             log.info("next level");
-            level.setCsvFile("level2.csv");
+            switch (nLevel)
+            {
+                case 2:
+                    level.setCsvFile("level2.csv");
+                    break;
+                case 3:
+                    level.setCsvFile("level3.csv");
+                    break;
+                case 4:
+                    level.setCsvFile("level4.csv");
+                    break;
+                default:
+                    level.setCsvFile("level2.csv");
+                    break;
+            }
+
+            doorLocked=true;
+            cambiolivello=true;
+            bombRange=1;
         }
         if(level.getCell(currentX + 1, currentY) == 1){
 

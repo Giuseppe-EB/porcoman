@@ -44,8 +44,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		this.input = new MouseInput(cam);
 		try {
 			sprites.add(new Player(nLevel));
-			sprites.add(new Nemico(320, 200, 1, 15, 9, 1));
-			sprites.add(new Nemico(240,280,1,15,1,11));
+			sprites.add(new Nemico(600, 380, 1, 15, 9, 1));
+			sprites.add(new Nemico(280,220,1,15,1,11));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -73,6 +73,23 @@ public class MyGdxGame extends ApplicationAdapter {
 			sprites.add(new Player(nLevel));
 			switch (nLevel)
 			{
+				case 2:
+					sprites.add(new Nemico(360, 300, 1, 15, 9, 1));
+					sprites.add(new Nemico(360,140,1,15,1,11));
+					sprites.add(new Nemico(440,100,1,15,1,11));
+					break;
+				case 3:
+					sprites.add(new Nemico(360, 140, 1, 15, 9, 1));
+					sprites.add(new Nemico(520,60,1,15,1,11));
+					sprites.add(new Nemico(600, 100, 1, 15, 9, 1));
+					sprites.add(new Nemico(680,140,1,15,1,11));
+					break;
+				case 4:
+					sprites.add(new Nemico(520, 300, 1, 15, 9, 1));
+					sprites.add(new Nemico(600,220,1,15,1,11));
+					sprites.add(new Nemico(440, 60, 1, 15, 9, 1));
+					sprites.add(new Nemico(360,60,1,15,1,11));
+					break;
 				default:
 					sprites.add(new Nemico());
 			}

@@ -89,7 +89,7 @@ choice(M)|not_choice(M):- move(M).
 
 
 :- choice(X), wall(X, 1).
-:- choice(X), enemyPath(X, 2).
+:- mode(X), choice(X), enemyPath(X, 2), X!=0.
 
 
 

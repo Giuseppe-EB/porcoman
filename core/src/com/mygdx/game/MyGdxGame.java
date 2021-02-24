@@ -27,7 +27,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
 	private boolean start=false;
 	public static int height = 440;
-	public static int width = 680;
+	public static int width = 760;
 	private OrthographicCamera cam;
 	private StretchViewport view;
 	private Stage stage;
@@ -44,8 +44,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		this.input = new MouseInput(cam);
 		try {
 			sprites.add(new Player());
-			sprites.add(new Nemico(320, 200, 7, 13, 5, 2));
-			sprites.add(new Nemico(240,280,3,7,7,9));
+			sprites.add(new Nemico(320, 200, 1, 15, 9, 1));
+			sprites.add(new Nemico(240,280,1,15,1,11));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

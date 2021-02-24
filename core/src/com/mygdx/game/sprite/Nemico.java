@@ -174,6 +174,8 @@ public class Nemico extends Sprite {
                 dists.add(new Distance(3, (int) round(10 * sqrt(pow((P1_x - P2_x), 2) + pow(((P1_y - 1) - P2_y), 2)))));
 
             }
+            dists.add(new Distance(4, (int) round(10 * sqrt(pow((P1_x - P2_x), 2) + pow((P1_y - P2_y), 2)))));
+            actions.add(new Action(4));
             ai.load_fact(new Position(P1_x, P1_y),actions, dists);
             AnswerSets answers = ai.getAnswerSets();
             for (AnswerSet an : answers.getAnswersets()) {
@@ -195,17 +197,27 @@ public class Nemico extends Sprite {
                 set_allCan_move(0, true);
                 this.x += 40;
             }
-            if (move == 2) {
+            else if (move == 2) {
                 set_allCan_move(0, true);
                 this.y += 40;
             }
-            if (move == 3) {
+            else if (move == 3) {
                 set_allCan_move(0, true);
                 this.y -= 40;
             }
-            if (move == 0) {
+            else if (move == 0) {
                 set_allCan_move(0, true);
                 this.x -= 40;
+            }
+            else if (move == 4) {
+                if(P2_x == goalX2 && P2_y == goalY2 ){
+                    P2_x = goalX1;
+                    P2_y = goalY1;
+                }
+                else if(P2_x == goalX1 && P2_y == goalY1){
+                    P2_x = goalX2;
+                    P2_y = goalY2;
+                }
             }
             ai.clear();
 

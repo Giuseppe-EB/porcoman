@@ -2,6 +2,7 @@ package com.mygdx.game.level;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.mygdx.game.sprite.Coin;
 import com.mygdx.game.sprite.IncreaseBombRange;
 import com.mygdx.game.sprite.Key;
 import com.mygdx.game.sprite.PowerUp;
@@ -168,28 +169,31 @@ public class Level {
 
     private void addPowerUp(int x, int y){
 
-        int type = random.nextInt() % 2;
+        int type = random.nextInt() % 4;
         boolean drop = random.nextBoolean();
 
         /*
         LEGEND
                 0 ===> IncreaseBomb
                 1 ===> Key
+                2 ===> Coin
         */
 
-        if(drop){
             switch (type){
                 case 0:
-                    powerUps.add(new IncreaseBombRange(x*40, y*40));
+                    if(bombRange<4)
+                        powerUps.add(new IncreaseBombRange(x*40, y*40));
                     break;
                 case 1:
                     if(doorLocked)
                         powerUps.add(Key.getInstance(x*40, y*40));
                     break;
+                case 2:
+                    powerUps.add(new Coin(x*40, y*40));
+                    break;
                 default:
                     return;
             }
-        }
 
     }
 

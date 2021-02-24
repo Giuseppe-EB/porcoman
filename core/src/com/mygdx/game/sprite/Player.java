@@ -27,6 +27,8 @@ public class Player extends Sprite {
     private boolean powerUpFree = true;
     private boolean enemyClean = true;
 
+    private boolean deepSearch = false;
+
     private String enemy = null;
 
     public boolean isPowerUpFree() {
@@ -84,7 +86,7 @@ public class Player extends Sprite {
     private int bombPlaced = 0;
 
     private int goalX = 15;
-    private int goalY = 6;
+    private int goalY = 5;
 
     private int currentGoalX;
     private int currentGoalY;
@@ -212,6 +214,9 @@ public class Player extends Sprite {
             doorLocked=true;
             cambiolivello=true;
             bombRange=1;
+        }
+        else if (level.getCell(currentX, currentY ) == 10){
+            deepSearch = true;
         }
         if(level.getCell(currentX + 1, currentY) == 1){
 
@@ -422,6 +427,10 @@ public class Player extends Sprite {
             if(powerUpFree) {
                 currentGoalX = goalX;
                 currentGoalY = goalY;
+                if(deepSearch){
+                    currentGoalX = 1;
+                    currentGoalY = 1;
+                }
                 if(enemyDist < 7 && !enemyClean){
                     if(enemyDist <= bombRange)
                         mode = 2;
@@ -689,8 +698,10 @@ public class Player extends Sprite {
             this.bombRange++;
             log.info("bomb range: " + bombRange);
         }
-        else if(powerUp.getClass() == Key.class)
+        else if(powerUp.getClass() == Key.class) {
             doorLocked = false;
+            deepSearch = false;
+        }
 
     }
 }

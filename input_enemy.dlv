@@ -19,4 +19,7 @@ choice(M)|not_choice(M):- move(M).
 :- #count{M:choice(M)}<1.
 
 
+%   scegli la cella più vicina all'obiettivo
+
 :~ dist(X, Y), choice(X). [Y @ 1]
+

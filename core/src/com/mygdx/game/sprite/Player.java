@@ -172,7 +172,7 @@ public class Player extends Sprite {
         this.can_hit = can_hit;
     }
 
-    public Player() throws IOException {
+    public Player(int nLevel) throws IOException {
         super("stupid.png");
         this.x = 50;
         this.y = 220;
@@ -185,6 +185,7 @@ public class Player extends Sprite {
         can_destroy = new boolean[]{false, false, false, false};
         dirSafe = new boolean[]{false, false, false, false};
         enemyFree = new boolean[]{true, true, true, true};
+        this.nLevel=nLevel;
     }
     @Override
     public void update(Level level) {
@@ -193,7 +194,7 @@ public class Player extends Sprite {
         int currentX = getX()/40;
         int currentY = getY()/40;
         if(level.getCell(currentX, currentY ) == 10 && !doorLocked){
-
+            nLevel++;
             log.info("next level");
             switch (nLevel)
             {

@@ -43,7 +43,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		this.cam = new OrthographicCamera();
 		this.input = new MouseInput(cam);
 		try {
-			sprites.add(new Player());
+			sprites.add(new Player(nLevel));
 			sprites.add(new Nemico(320, 200, 1, 15, 9, 1));
 			sprites.add(new Nemico(240,280,1,15,1,11));
 		} catch (IOException e) {
@@ -70,7 +70,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		this.cam = new OrthographicCamera();
 		this.input = new MouseInput(cam);
 		try {
-			sprites.add(new Player());
+			sprites.add(new Player(nLevel));
 			switch (nLevel)
 			{
 				default:

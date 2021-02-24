@@ -21,6 +21,8 @@ import static java.lang.StrictMath.round;
 
 public class Player extends Sprite {
 
+    private ArrayList<Integer> moves = new ArrayList<>();
+
     private boolean doorLocked = true;
     private boolean powerUpFree = true;
     private boolean enemyClean = true;
@@ -240,7 +242,7 @@ public class Player extends Sprite {
 
             for (int i = 0; i < 4; i++) {
                 if (can_move[i])
-                    dirSafe[i] = analyzeSafe(currentY, currentX, level, i, bombRange - Math.round(bombDist));
+                    dirSafe[i] = analyzeSafe(currentY, currentX, level, i, bombRange - Math.round(bombDist) + 1);
             }
         }
         else
@@ -282,6 +284,8 @@ public class Player extends Sprite {
 
 
         if(move == 3) {
+            if(playerX != bombX && playerY - 1 != bombGoalY)
+                return true;
             for (int col = i - 1; col >= i - bombRange; col--) {
 
                 int currentPos = level.getCell(j, col);
@@ -297,6 +301,8 @@ public class Player extends Sprite {
             }
         }
         else if(move == 2) {
+            if(playerX != bombX && playerY + 1 != bombGoalY)
+                return true;
             for (int col = i + 1; col <= i + bombRange; col++) {
 
                 int currentPos = level.getCell(j, col);
@@ -312,6 +318,8 @@ public class Player extends Sprite {
             }
         }
         else if(move == 0) {
+            if(playerX - 1 != bombX && playerY != bombGoalY)
+                return true;
             for (int row = j - 1; row >= j - bombRange; row--) {
 
                 int currentPos = level.getCell(row, i);
@@ -327,6 +335,8 @@ public class Player extends Sprite {
             }
         }
         else if(move == 1) {
+            if(playerX + 1 != bombX && playerY != bombGoalY)
+                return true;
             for (int row = j + 1; row <= j + bombRange; row++) {
 
                 int currentPos = level.getCell(row, i);
@@ -521,6 +531,7 @@ public class Player extends Sprite {
                 this.bombGoalY=playerY;
                 bombPlaced++;
             }
+            moves.add(move);
             ai.clear();
         }
         else{

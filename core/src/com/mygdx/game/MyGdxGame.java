@@ -73,9 +73,6 @@ public class MyGdxGame extends ApplicationAdapter {
 			sprites.add(new Player());
 			switch (nLevel)
 			{
-				case 2:
-					sprites.add(new Nemico());
-					break;
 				default:
 					sprites.add(new Nemico());
 			}
@@ -142,6 +139,7 @@ public class MyGdxGame extends ApplicationAdapter {
 								player.setEnemyClean(true);
 								sprite.setAlive(false);
 								dead_sprite.add(sprite);
+								player.update(100, 100, sprite.toString());
 								break;
 							}
 							else if(sprite2.getClass()==Player.class)

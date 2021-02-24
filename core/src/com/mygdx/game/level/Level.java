@@ -50,6 +50,7 @@ public class Level {
     public void setCsvFile(String csvFile) {
         switch_level = true;
         powerUps.clear();
+        bombRange = 1;
         this.csvFile = csvFile;
     }
 
@@ -194,24 +195,24 @@ public class Level {
 
     private void analyzeExplosionX(int i, int j, int bombRange){
 
-        if(this.getCell(j, i - 1) != 11) {
+        if(this.getCell(j, i - 1) != 11 ) {
             for (int col = i; col >= i - bombRange; col--) {
 
                 int currentPos = this.getCell(j, col);
 
-                if (currentPos != 11 && currentPos != 0 && currentPos != 2) {
+                if (currentPos != 11 && currentPos != 0 && currentPos != 2 && currentPos != 10) {
                     matrix.get(col).set(j, 0);
                     addPowerUp(j, col);
                     break;
                 }
             }
         }
-        if(this.getCell(j, i + 1 ) != 11) {
+        if(this.getCell(j, i + 1 ) != 11 ) {
             for (int col = i; col <= i + bombRange; col++) {
 
                 int currentPos = this.getCell(j, col);
 
-                if (currentPos != 11 && currentPos != 0 && currentPos != 2) {
+                if (currentPos != 11 && currentPos != 0 && currentPos != 2 && currentPos != 10) {
                     matrix.get(col).set(j, 0);
                     addPowerUp(j, col);
                     break;
@@ -227,7 +228,7 @@ public class Level {
 
                 int currentPos = this.getCell(row, i);
 
-                if (currentPos != 11 && currentPos != 0 && currentPos != 2) {
+                if (currentPos != 11 && currentPos != 0 && currentPos != 2 && currentPos != 10) {
                     matrix.get(i).set(row, 0);
                     addPowerUp(row, i);
                     break;
@@ -239,7 +240,7 @@ public class Level {
 
                 int currentPos = this.getCell(row, i);
 
-                if (currentPos != 11 && currentPos != 0 && currentPos != 2) {
+                if (currentPos != 11 && currentPos != 0 && currentPos != 2 && currentPos != 10) {
                     matrix.get(i).set(row, 0);
                     addPowerUp(row, i);
                     break;

@@ -155,7 +155,7 @@ public class MyGdxGame extends ApplicationAdapter {
 						sprite.update(sprites.get(0).getX(), sprites.get(0).getY());
 						for(Sprite sprite2 : sprites)
 							if(sprite2.getClass()==Bomb.class&&sprite2.collision(sprite.getHitbox())) {
-								player.update(100, 100, sprite.toString());
+								player.update(1000, 1000, "nemico");
 								player.setEnemyClean(true);
 								sprite.setAlive(false);
 								dead_sprite.add(sprite);

@@ -110,7 +110,7 @@ public class Player extends Sprite {
     private int ia_count = 0;
     private boolean cambiolivello=false;
     private int nLevel=1;
-
+    private int nMorti=0;
     public boolean isCambiolivello() {
         return cambiolivello;
     }
@@ -379,6 +379,41 @@ public class Player extends Sprite {
     }
 
     public void update(int x, int y, String enemy) {
+        if(enemy.equalsIgnoreCase("nemico"))
+            this.nMorti++;
+        System.out.println(nMorti);
+        switch (nLevel) {
+            case 1:
+                if (nMorti == 2) {
+                    enemyX = 1000;
+                    enemyY = 1000;
+                    nMorti = 0;
+                }
+                System.out.println("DOPO IL SET SONO"+ enemyX+enemyY);
+                break;
+            case 2:
+                if (nMorti == 3) {
+                    enemyX = 1000;
+                    enemyY = 1000;
+                    nMorti = 0;
+                }
+                break;
+            case 3:
+                if (nMorti == 4) {
+                    enemyX = 1000;
+                    enemyY = 1000;
+                    nMorti = 0;
+                }
+                break;
+            case 4:
+
+                if (nMorti == 4) {
+                    enemyX = 1000;
+                    enemyY = 1000;
+                    nMorti = 0;
+                }
+                break;
+        }
         if(this.enemy != null) {
             double enemyDist = sqrt(pow((playerX - enemyX), 2) + pow((playerY - enemyY), 2));
             if (!this.enemy.equalsIgnoreCase(enemy) &&

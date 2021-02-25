@@ -85,8 +85,8 @@ public class Player extends Sprite {
 
     private int bombPlaced = 0;
 
-    private int goalX = 15;
-    private int goalY = 5;
+    private int goalX;
+    private int goalY;
 
     private int currentGoalX;
     private int currentGoalY;
@@ -172,7 +172,7 @@ public class Player extends Sprite {
         this.can_hit = can_hit;
     }
 
-    public Player(int nLevel) throws IOException {
+    public Player(int nLevel, int goalX, int goalY) throws IOException {
         super("stupid.png");
         this.x = 50;
         this.y = 220;
@@ -185,6 +185,8 @@ public class Player extends Sprite {
         can_destroy = new boolean[]{false, false, false, false};
         dirSafe = new boolean[]{false, false, false, false};
         enemyFree = new boolean[]{true, true, true, true};
+        this.goalX = goalX;
+        this.goalY = goalY;
         this.nLevel=nLevel;
     }
     @Override
@@ -200,12 +202,18 @@ public class Player extends Sprite {
             {
                 case 2:
                     level.setCsvFile("level2.csv");
+                    goalX = 13;
+                    goalY = 4;
                     break;
                 case 3:
                     level.setCsvFile("level3.csv");
+                    goalX = 17;
+                    goalY = 2;
                     break;
                 case 4:
                     level.setCsvFile("level4.csv");
+                    goalX = 17;
+                    goalY = 9;
                     break;
                 default:
                     level.setCsvFile("level2.csv");
@@ -219,6 +227,8 @@ public class Player extends Sprite {
         else if (level.getCell(currentX, currentY ) == 10){
             deepSearch = true;
         }
+        if(deepSearch && currentX == 1 && currentY == 1)
+            deepSearch = false;
         if(level.getCell(currentX + 1, currentY) == 1){
 
             can_destroy[1] = true;
@@ -481,9 +491,11 @@ public class Player extends Sprite {
                     if (mode != 1 || checkSafe(i))
                         actions.add(new Action(i));
                 }
-                if ( !enemyFree[i] && enemyDist > bombRange || enemyDist <= bombRange + 1)
+                else
+                    walls.add(new Wall(i, 3));
+                if ( !enemyFree[i] && enemyDist > bombRange)
                     enemyPaths.add(new EnemyPath(i, 1));
-                if( !enemyFree[i] && enemyDist <= bombRange )
+                if( !enemyFree[i] && enemyDist <= bombRange + 1 )
                     enemyPaths.add(new EnemyPath(i, 2));
                 else if(enemyFree[i])
                     enemyPaths.add(new EnemyPath(i, 0));
@@ -575,6 +587,8 @@ public class Player extends Sprite {
             bombPlaced++;
         }
 
+        if (Gdx.input.isKeyPressed((Input.Keys.N)))
+            log.info("CURRENT ENEMY: [" + enemyX + ", " + enemyY + "] ");
     }
 
     private boolean checkSafe(int i) {

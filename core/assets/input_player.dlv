@@ -19,6 +19,7 @@
 %   wall( X, 0) == > muro assente a X
 %   wall( X, 1) == > muro distruttibile a X
 %   wall( X, 2) == > bomba a X
+%   wall( X, 3) == > muro indistruttibile a X
 %   enemyPath( X, 0) == > direzione X libera
 %   enemyPath( X, 1) == > nemico in direzione X
 %   enemyPath( X, 2) == > nemico colpibile in direzione X
@@ -47,7 +48,12 @@ choice(M)|not_choice(M):- move(M).
 
     % se non ci sono muri distrubbili o nemici non ha senso piazzare la bomba
 
-    :- mode(0), #count{X:wall(X, 0)} = 4, choice(4).
+    :- mode(0), #count{Y : enemyPath(Y, 0)} = 4, #count{X : wall(X, Y), Y!=1} = 4, choice(4).
+
+    % se il nemico è troppo vicino piazza una bomba
+
+    :~ mode(0), enemyPath(X, 2), choice(Y), dist(X, 0), Y!=4. [2 @ 1]
+
 
 %   mode BOMB scegli la cella più lontana dalla bomba
 
@@ -57,6 +63,7 @@ choice(M)|not_choice(M):- move(M).
 
     :~ mode(1), choice(X), enemyPath(X, 1). [3 @ 1]
     :~ mode(1), enemy_dist(X, Y), choice(X). [4-Y @ 1]
+    :~ mode(1), enemy_dist(X, 0), choice(X), X!=4. [2 @ 2]
 
     % se il nemico è troppo vicino non stare fermo
 
@@ -65,15 +72,17 @@ choice(M)|not_choice(M):- move(M).
 
 %   mode ENEMY vai verso il nemico finchè non lo puoi colpire
 
-%:~ mode(2), enemy_dist(X, Y), choice(X). [Y @ 1]
+:~ mode(2), enemy_dist(X, Y), choice(X). [Y @ 1]
 
     %   se il nemico è in dietro un muro distruttibile piazza la bomba
 
     :~ mode(2), enemyPath( X, 1), wall(X, 1), choice(Y), Y!=4. [2 @ 1]
 
-    %   se puoi colpisci il nemico
+    %   se puoi colpisci il nemico ma non mettere la bomba se c'è un muro indistruttibile in mezzo
 
     :~ mode(2), enemyPath( X, 2), choice(Y), Y!=4. [1 @ 2]
+
+    :- mode(2), enemyPath( X, 2), wall( X, 3), choice(Y), Y=4.
 
 %   mode SEARCH vai verso l'obiettivo, ma dai priorità a distruggere i blocchi (quindi cerca la chiave)
 
@@ -85,7 +94,9 @@ choice(M)|not_choice(M):- move(M).
 
     :~ mode(3), wall( _ , 1), choice(Y), Y!=4. [2 @ 1]
 
+    % non avvicinarti troppo al nemico
 
+    :~ mode(3), enemyPath(X, 2), choice(X). [2 @ 1]
 
 
 :- choice(X), wall(X, 1).

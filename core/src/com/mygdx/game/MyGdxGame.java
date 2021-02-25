@@ -43,8 +43,8 @@ public class MyGdxGame extends ApplicationAdapter {
 		this.cam = new OrthographicCamera();
 		this.input = new MouseInput(cam);
 		try {
-			sprites.add(new Player(nLevel));
-			sprites.add(new Nemico(600, 380, 1, 15, 9, 1));
+			sprites.add(new Player(nLevel, 15, 5));
+			sprites.add(new Nemico(600, 380, 1, 15, 9, 2));
 			sprites.add(new Nemico(280,220,1,15,1,11));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -70,25 +70,27 @@ public class MyGdxGame extends ApplicationAdapter {
 		this.cam = new OrthographicCamera();
 		this.input = new MouseInput(cam);
 		try {
-			sprites.add(new Player(nLevel));
 			switch (nLevel)
 			{
 				case 2:
-					sprites.add(new Nemico(360, 300, 1, 15, 9, 1));
-					sprites.add(new Nemico(360,140,1,15,1,11));
-					sprites.add(new Nemico(440,100,1,15,1,11));
+					sprites.add(new Player(nLevel, 13, 4));
+					sprites.add(new Nemico(360, 300, 1, 13, 7, 7));
+					sprites.add(new Nemico(360,140,9,9,9,1));
+					sprites.add(new Nemico(440,100,1,11,13,1));
 					break;
 				case 3:
-					sprites.add(new Nemico(360, 140, 1, 15, 9, 1));
-					sprites.add(new Nemico(520,60,1,15,1,11));
-					sprites.add(new Nemico(600, 100, 1, 15, 9, 1));
-					sprites.add(new Nemico(680,140,1,15,1,11));
+					sprites.add(new Player(nLevel, 17, 2));
+					sprites.add(new Nemico(360, 140, 17, 1, 1, 9));
+					sprites.add(new Nemico(520,60,1,17,1,1));
+					sprites.add(new Nemico(600, 100, 15, 15, 9, 1));
+					sprites.add(new Nemico(680,140,1,17,3,3));
 					break;
 				case 4:
-					sprites.add(new Nemico(520, 300, 1, 15, 9, 1));
-					sprites.add(new Nemico(600,220,1,15,1,11));
-					sprites.add(new Nemico(440, 60, 1, 15, 9, 1));
-					sprites.add(new Nemico(360,60,1,15,1,11));
+					sprites.add(new Player(nLevel, 17, 9));
+					sprites.add(new Nemico(520, 300, 1, 17, 9, 7));
+					sprites.add(new Nemico(600,220,15,15,1,9));
+					sprites.add(new Nemico(440, 60, 10, 16, 9, 1));
+					sprites.add(new Nemico(360,60,1,17,1,11));
 					break;
 				default:
 					sprites.add(new Nemico());
@@ -153,10 +155,10 @@ public class MyGdxGame extends ApplicationAdapter {
 						sprite.update(sprites.get(0).getX(), sprites.get(0).getY());
 						for(Sprite sprite2 : sprites)
 							if(sprite2.getClass()==Bomb.class&&sprite2.collision(sprite.getHitbox())) {
+								player.update(100, 100, sprite.toString());
 								player.setEnemyClean(true);
 								sprite.setAlive(false);
 								dead_sprite.add(sprite);
-								player.update(100, 100, sprite.toString());
 								break;
 							}
 							else if(sprite2.getClass()==Player.class)

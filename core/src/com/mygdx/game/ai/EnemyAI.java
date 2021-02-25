@@ -51,16 +51,16 @@ public class EnemyAI {
     }
     public AnswerSets getAnswerSets() throws Exception {
         Output o = handler.startSync();
-        try {
+        /*try {
             for(int i=0; ; i++){
                 System.out.println("input dlv = " + handler.getInputProgram(i).getPrograms());
-            }}catch (Exception ignore){}
+            }}catch (Exception ignore){}*/
         if (((AnswerSets) o).getAnswersets().size() == 0) {
             throw new Exception("NO ANSWERSET!");
         }
-        for (AnswerSet an : ((AnswerSets) o).getAnswersets()) {
-            System.out.println("output = " + an.getAnswerSet());
-        }
+        /*for (AnswerSet an : ((AnswerSets) o).getAnswersets()) {
+            //System.out.println("output = " + an.getAnswerSet());
+        }*/
 
         return (AnswerSets) o;
 

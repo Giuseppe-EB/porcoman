@@ -1,4 +1,5 @@
 # Porcoman bomberman's AI
+Customized version of classic Bomberman.
 A project for the AI course of University of Calabria
 
 Clone project ed execute porcoman.jar

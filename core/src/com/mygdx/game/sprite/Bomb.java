@@ -118,7 +118,7 @@ public class Bomb extends Sprite {
                     this.texture= new  Texture("esplosione4.png");
                     break;
                 default:
-                    this.texture = new Texture("BombermanEffect1.png");
+                    this.texture = new Texture("esplosione1.png");
 
             }
         }

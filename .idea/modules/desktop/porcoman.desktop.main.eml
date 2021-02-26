@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component inheritJdk="true">
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$/../../../core/assets"/>
+	<contentEntry url="file://$MODULE_DIR$/../../../desktop/src"/>
+	<lib name="embasp_3.1.0.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/core/libs/embasp_3.1.0.jar!/"/>
+	</lib>
+	<lib name="Gradle: net.java.jinput:jinput-platform:natives-linux:2.0.5" scope="RUNTIME"/>
+	<lib name="Gradle: net.java.jinput:jinput-platform:natives-osx:2.0.5" scope="RUNTIME"/>
+	<lib name="Gradle: net.java.jinput:jinput-platform:natives-windows:2.0.5" scope="RUNTIME"/>
+	<levels>
+		<level name="Gradle: com.badlogicgames.gdx:gdx-backend-lwjgl:1.9.10" value="project"/>
+		<level name="Gradle: com.badlogicgames.gdx:gdx-platform:natives-desktop:1.9.10" value="project"/>
+		<level name="Gradle: com.badlogicgames.gdx:gdx:1.9.10" value="project"/>
+		<level name="Gradle: org.lwjgl.lwjgl:lwjgl_util:2.9.3" value="project"/>
+		<level name="Gradle: org.lwjgl.lwjgl:lwjgl:2.9.3" value="project"/>
+		<level name="Gradle: com.badlogicgames.jlayer:jlayer:1.0.1-gdx" value="project"/>
+		<level name="Gradle: org.jcraft:jorbis:0.0.17" value="project"/>
+		<level name="Gradle: org.lwjgl.lwjgl:lwjgl-platform:natives-linux:2.9.3" value="project"/>
+		<level name="Gradle: org.lwjgl.lwjgl:lwjgl-platform:natives-osx:2.9.3" value="project"/>
+		<level name="Gradle: org.lwjgl.lwjgl:lwjgl-platform:natives-windows:2.9.3" value="project"/>
+		<level name="Gradle: net.java.jinput:jinput:2.0.5" value="project"/>
+		<level name="Gradle: net.java.jutils:jutils:1.0.0" value="project"/>
+		<level name="Gradle: net.java.jinput:jinput-platform:natives-linux:2.0.5" value="project"/>
+		<level name="Gradle: net.java.jinput:jinput-platform:natives-osx:2.0.5" value="project"/>
+		<level name="Gradle: net.java.jinput:jinput-platform:natives-windows:2.0.5" value="project"/>
+	</levels>
+</component>

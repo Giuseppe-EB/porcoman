@@ -1,33 +1,123 @@
-%move(0..3).
-move(1).
-move(3).
-position(0, 1).
-end(18, 8).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%LEGEND:
+%
+%   LEGEND:
+%
+%       mode:
+%                    0 GOAL
+%                    1 BOMB
+%                    2 ENEMY
+%                    3 SEARCH
+%
+%       move:
 %                    0 LEFT
 %                    1 RIGHT
 %                    2 UP
 %                    3 DOWN
-
+%                    4 BOMB
+%
+%   dist( X, Y) === > Y = distanza dalla fine se mossa X
+%   wall( X, 0) == > muro assente a X
+%   wall( X, 1) == > muro distruttibile a X
+%   wall( X, 2) == > bomba a X
+%   wall( X, 3) == > muro indistruttibile a X
+%   enemyPath( X, 0) == > direzione X libera
+%   enemyPath( X, 1) == > nemico in direzione X
+%   enemyPath( X, 2) == > nemico colpibile in direzione X
+%   around(X, 0) == > puoi girare attorno in direzione X
+%   around(X, 1) == > muro distruttibile attorno in direzione X
+%   around(X, 2) == > muro indistruttibile attorno in direzione X
+%
+%
+%
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 choice(M)|not_choice(M):- move(M).
 :- #count{M:choice(M)}<1.
+:- choice(X), choice(Y), X!=Y.
 
 
-:- move(0), muro(X, Y), position(X-1, Y).
-:- move(1), muro(X, Y), position(X+1, Y).
-:- move(2), muro(X, Y), position(X, Y+1).
-:- move(3), muro(X, Y), position(X, Y-1).
 
-% distanza tra due punti : d( P1, P2) = sqrt((x2 - x1)^2+(y2-y1)^2)
 
-% d((1,1),(18,8))= sqrt 289 + 49 = 18
-% d((0, 2)), (18, 8))= sqrt 324 + 36 = 19
+%   distanza tra due punti : d( P1, P2) = sqrt((x2 - x1)^2+(y2-y1)^2)
 
-d(1, 18).
-d(3, 19).
 
-:~ d(X, Y), choice(X). [Y @ 1]
+%   mode GOAL scegli la cella più vicina all'obiettivo
+
+:~ mode(0), dist(X, Y), choice(X). [Y @ 2]
+
+    %   se la cella più vicina è dietro ad un muro distruttibile piazza la bomba
+
+    :~ mode(0), dist(X, 0), wall(X, 1), choice(Y), Y!=X, Y!=4. [3 @ 2]
+
+    % se non ci sono muri distrubbili o nemici non ha senso piazzare la bomba
+
+    :- mode(0), #count{Y : enemyPath(Y, 0)} = 4, #count{X : wall(X, Y), Y!=1} = 4, choice(4).
+
+    % se il nemico è troppo vicino piazza una bomba
+
+    :~ mode(0), enemyPath(X, 2), choice(Y), dist(X, 0), Y!=4. [2 @ 2]
+
+    % controlla intorno
+
+    :~ mode(0), dist(X, 0), wall(X, 3), around(Y, Z), choice(Y), Z!=0. [2 @ 1]
+
+
+
+%   mode BOMB scegli la cella più lontana dalla bomba
+
+:~ mode(1), bomb_dist(X, Y), choice(X). [4-Y @ 2]
+
+    % non scappare verso il nemico
+
+    :~ mode(1), choice(X), enemyPath(X, 1). [3 @ 1]
+    :~ mode(1), enemy_dist(X, Y), choice(X). [4-Y @ 1]
+    :~ mode(1), enemy_dist(X, 0), choice(X), X!=4. [2 @ 2]
+    :~ mode(1), enemyPath(X, 2), dist(X, 0). [1 @ 2]
+
+    % se il nemico è troppo vicino non stare fermo
+
+    :~ mode(1), choice(4), enemyPath( _ , 2). [2 @ 1]
+
+
+%   mode ENEMY vai verso il nemico finchè non lo puoi colpire
+
+%:~ mode(2), enemy_dist(X, Y), choice(X). [Y @ 1]
+
+    %   se il nemico è in dietro un muro distruttibile piazza la bomba
+
+    :~ mode(2), enemyPath( X, 1), wall(X, 1), choice(Y), Y!=4. [2 @ 1]
+
+    %   se puoi colpisci il nemico ma non mettere la bomba se c'è un muro indistruttibile in mezzo
+
+    :~ mode(2), enemyPath( X, 2), choice(Y), Y!=4. [1 @ 2]
+
+    :- mode(2), enemyPath( X, 2), wall( X, 3), choice(Y), Y=4.
+
+%   mode SEARCH vai verso l'obiettivo, ma dai priorità a distruggere i blocchi (quindi cerca la chiave)
+
+:~ mode(3), dist(X, Y), choice(X). [Y @ 2]
+
+    %   se la cella più vicina è dietro ad un muro distruttibile piazza la bomba
+
+    :~ mode(3), dist(X, 0), wall(X, 1), choice(Y), Y!=4. [3 @ 2]
+
+    :~ mode(3), wall( _ , 1), choice(Y), Y!=4. [2 @ 2]
+
+    % non avvicinarti troppo al nemico
+
+    :~ mode(3), enemyPath(X, 2), choice(X). [2 @ 2]
+
+    % controlla intorno
+
+    :~ mode(3), dist(X, 0), wall(X, 3), around(Y, Z), choice(Y), Z!=0. [2 @ 1]
+
+    :- mode(3), #count{Y : enemyPath(Y, 0)} = 4, #count{X : wall(X, Y), Y!=1} = 4, choice(4).
+
+:- choice(X), wall(X, 1).
+%:- mode(0), choice(X), enemyPath(X, 2), X!=0.
+
+
+
 

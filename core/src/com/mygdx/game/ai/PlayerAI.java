@@ -20,15 +20,16 @@ public class PlayerAI {
     private String dlv_input;
 
     public PlayerAI() throws IOException {
-        path = "./desktop/build/resources/main/dlv2.exe";
+        path = "./dlv2.exe";
         //path = "/core/libs/dlv2.exe";
-        dlv_input = "./desktop/build/resources/main/input_player.dlv";
+        dlv_input = "./input_player.dlv";
         System.out.println(dlv_input);
         //dlv_input = "input_player.dlv";
         String current = new java.io.File( "." ).getCanonicalPath();
         System.out.println("Current dir:"+current);
         handler = new DesktopHandler(new DLV2DesktopService(path));
         input = new ASPInputProgram();
+        System.out.println("porcodio");
         input.addFilesPath(dlv_input);
     }
     public void clear()

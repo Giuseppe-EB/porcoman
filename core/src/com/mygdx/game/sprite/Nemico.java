@@ -178,6 +178,12 @@ public class Nemico extends Sprite {
             actions.add(new Action(4));
             ai.load_fact(new Position(P1_x, P1_y),actions, dists);
             AnswerSets answers = ai.getAnswerSets();
+
+            while(answers.getAnswersets().get(0).getAnswerSet().isEmpty()){
+                ai.load_fact(new Position(P1_x, P1_y),actions, dists);
+                answers = ai.getAnswerSets();
+            }
+
             for (AnswerSet an : answers.getAnswersets()) {
                 Pattern pattern = Pattern.compile("^choice\\((\\d+)\\)");
                 Matcher matcher;

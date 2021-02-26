@@ -453,7 +453,7 @@ public class Player extends Sprite {
         }
         if(go_ia&&ia_count==10) {
 
-            int move = 0;
+            int move = -1;
             int mode = 0;
 
 
@@ -550,6 +550,20 @@ public class Player extends Sprite {
             );
 
             AnswerSets answers = ai.getAnswerSets();
+            while(answers.getAnswersets().get(0).getAnswerSet().isEmpty()){
+                ai.load_fact(   new Position(playerX, playerY),
+                        actions,
+                        makeDistances(buildDistances(currentGoalX, currentGoalY)),
+                        makeBombDistances(buildDistances(bombX, bombY)),
+                        makeEnemyDistances(buildDistances(enemyX, enemyY)),
+                        walls,
+                        around,
+                        enemyPaths,
+                        new Mode(mode)
+                );
+                answers = ai.getAnswerSets();
+            }
+
             for (AnswerSet an : answers.getAnswersets()) {
                 Pattern pattern = Pattern.compile("^choice\\((\\d+)\\)");
                 Matcher matcher;

@@ -17,9 +17,9 @@ public class EnemyAI {
     private String path;
     private String dlv_input;
     public EnemyAI() throws IOException {
-        path = "./desktop/build/resources/main/dlv2.exe";
+        path = "./dlv2.exe";
         //path = "/core/libs/dlv2.exe";
-        dlv_input = "./desktop/build/resources/main/input_enemy.dlv";
+        dlv_input = "./input_enemy.dlv";
         //System.out.println(dlv_input);
         //dlv_input = "input_player.dlv";
         String current = new java.io.File( "." ).getCanonicalPath();

@@ -87,10 +87,10 @@ public class MyGdxGame extends ApplicationAdapter {
 					break;
 				case 4:
 					sprites.add(new Player(nLevel, 17, 9));
-					sprites.add(new Nemico(520, 300, 1, 17, 9, 7));
 					sprites.add(new Nemico(600,220,15,15,1,9));
 					sprites.add(new Nemico(440, 60, 10, 16, 9, 1));
 					sprites.add(new Nemico(360,60,1,17,1,11));
+					sprites.add(new Nemico(520, 300, 1, 17, 9, 7));
 					break;
 				default:
 					sprites.add(new Nemico());
@@ -142,7 +142,6 @@ public class MyGdxGame extends ApplicationAdapter {
 					sprite.update_hitbox();
 					sprite.draw(batch);
 					if(sprite.getClass() == Player.class) {
-						sprite.collision(sprites.get(1).getHitbox());
 						for(Sprite sprite2 : sprites)
 							if(sprite2.getClass() == Bomb.class && sprite2.collision(sprite.getHitbox())||
 								sprite2.getClass() == Nemico.class && sprite.collision(sprite2.getHitbox())){
@@ -155,7 +154,7 @@ public class MyGdxGame extends ApplicationAdapter {
 						sprite.update(sprites.get(0).getX(), sprites.get(0).getY());
 						for(Sprite sprite2 : sprites)
 							if(sprite2.getClass()==Bomb.class&&sprite2.collision(sprite.getHitbox())) {
-								player.update(1000, 1000, "nemico");
+								player.update(10000, 10000, sprite.toString());
 								player.setEnemyClean(true);
 								sprite.setAlive(false);
 								dead_sprite.add(sprite);
@@ -191,9 +190,10 @@ public class MyGdxGame extends ApplicationAdapter {
 			}
 
 			if(!dead_sprite.isEmpty())
-				for(Sprite sprite : dead_sprite)
-					if(!sprites.remove(sprite))
-						level.getPowerUps().remove(sprite);
+				for(Sprite sprite : dead_sprite) {
+					sprites.remove(sprite);
+					level.getPowerUps().remove(sprite);
+				}
 
 
 

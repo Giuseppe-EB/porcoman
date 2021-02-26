@@ -23,6 +23,10 @@
 %   enemyPath( X, 0) == > direzione X libera
 %   enemyPath( X, 1) == > nemico in direzione X
 %   enemyPath( X, 2) == > nemico colpibile in direzione X
+%   around(X, 0) == > puoi girare attorno in direzione X
+%   around(X, 1) == > muro distruttibile attorno in direzione X
+%   around(X, 2) == > muro indistruttibile attorno in direzione X
+%
 %
 %
 %
@@ -31,6 +35,7 @@
 
 choice(M)|not_choice(M):- move(M).
 :- #count{M:choice(M)}<1.
+:- choice(X), choice(Y), X!=Y.
 
 
 
@@ -40,11 +45,11 @@ choice(M)|not_choice(M):- move(M).
 
 %   mode GOAL scegli la cella più vicina all'obiettivo
 
-:~ mode(0), dist(X, Y), choice(X). [Y @ 1]
+:~ mode(0), dist(X, Y), choice(X). [Y @ 2]
 
     %   se la cella più vicina è dietro ad un muro distruttibile piazza la bomba
 
-    :~ mode(0), dist(X, 0), wall(X, 1), choice(Y), Y!=X, Y!=4. [3 @ 1]
+    :~ mode(0), dist(X, 0), wall(X, 1), choice(Y), Y!=X, Y!=4. [3 @ 2]
 
     % se non ci sono muri distrubbili o nemici non ha senso piazzare la bomba
 
@@ -52,7 +57,12 @@ choice(M)|not_choice(M):- move(M).
 
     % se il nemico è troppo vicino piazza una bomba
 
-    :~ mode(0), enemyPath(X, 2), choice(Y), dist(X, 0), Y!=4. [2 @ 1]
+    :~ mode(0), enemyPath(X, 2), choice(Y), dist(X, 0), Y!=4. [2 @ 2]
+
+    % controlla intorno
+
+    :~ mode(0), dist(X, 0), wall(X, 3), around(Y, Z), choice(Y), Z!=0. [2 @ 1]
+
 
 
 %   mode BOMB scegli la cella più lontana dalla bomba
@@ -64,6 +74,7 @@ choice(M)|not_choice(M):- move(M).
     :~ mode(1), choice(X), enemyPath(X, 1). [3 @ 1]
     :~ mode(1), enemy_dist(X, Y), choice(X). [4-Y @ 1]
     :~ mode(1), enemy_dist(X, 0), choice(X), X!=4. [2 @ 2]
+    :~ mode(1), enemyPath(X, 2), dist(X, 0). [1 @ 2]
 
     % se il nemico è troppo vicino non stare fermo
 
@@ -72,7 +83,7 @@ choice(M)|not_choice(M):- move(M).
 
 %   mode ENEMY vai verso il nemico finchè non lo puoi colpire
 
-:~ mode(2), enemy_dist(X, Y), choice(X). [Y @ 1]
+%:~ mode(2), enemy_dist(X, Y), choice(X). [Y @ 1]
 
     %   se il nemico è in dietro un muro distruttibile piazza la bomba
 
@@ -86,21 +97,26 @@ choice(M)|not_choice(M):- move(M).
 
 %   mode SEARCH vai verso l'obiettivo, ma dai priorità a distruggere i blocchi (quindi cerca la chiave)
 
-:~ mode(3), dist(X, Y), choice(X). [Y @ 1]
+:~ mode(3), dist(X, Y), choice(X). [Y @ 2]
 
     %   se la cella più vicina è dietro ad un muro distruttibile piazza la bomba
 
-    :~ mode(3), dist(X, 0), wall(X, 1), choice(Y), Y!=4. [3 @ 1]
+    :~ mode(3), dist(X, 0), wall(X, 1), choice(Y), Y!=4. [3 @ 2]
 
-    :~ mode(3), wall( _ , 1), choice(Y), Y!=4. [2 @ 1]
+    :~ mode(3), wall( _ , 1), choice(Y), Y!=4. [2 @ 2]
 
     % non avvicinarti troppo al nemico
 
-    :~ mode(3), enemyPath(X, 2), choice(X). [2 @ 1]
+    :~ mode(3), enemyPath(X, 2), choice(X). [2 @ 2]
 
+    % controlla intorno
+
+    :~ mode(3), dist(X, 0), wall(X, 3), around(Y, Z), choice(Y), Z!=0. [2 @ 1]
+
+    :- mode(3), #count{Y : enemyPath(Y, 0)} = 4, #count{X : wall(X, Y), Y!=1} = 4, choice(4).
 
 :- choice(X), wall(X, 1).
-:- mode(X), choice(X), enemyPath(X, 2), X!=0.
+%:- mode(0), choice(X), enemyPath(X, 2), X!=0.
 
 
 

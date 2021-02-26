@@ -93,6 +93,7 @@ public class Player extends Sprite {
 
     private boolean[] dirSafe;
     private boolean[] enemyFree;
+    private boolean[] freeAround;
 
     private boolean[] can_destroy;
     private int count ;
@@ -180,11 +181,11 @@ public class Player extends Sprite {
         this.enemyY = 100;
         can_hit = true;
         count=0;
-        System.out.println("porcodio");
         ai = new PlayerAI();
         can_destroy = new boolean[]{false, false, false, false};
         dirSafe = new boolean[]{false, false, false, false};
         enemyFree = new boolean[]{true, true, true, true};
+        freeAround = new boolean[]{true, true, true, true};
         this.goalX = goalX;
         this.goalY = goalY;
         this.nLevel=nLevel;
@@ -267,6 +268,31 @@ public class Player extends Sprite {
             }
         for (int i = 0; i < 4; i++){
             enemyFree[i] = analyzeEnemy(currentX, currentY, i);
+        }
+
+        if(currentY == goalY && currentX != goalX){
+            if(currentX < goalX ){
+                if(level.getCell(currentX + 1, currentY + 1) == 0 || level.getCell(currentX + 1, currentY + 1) == 1 )
+                    freeAround[2] = true;
+                else
+                    freeAround[2] = false;
+                if(level.getCell(currentX + 1, currentY - 1) == 0 || level.getCell(currentX + 1, currentY + 1) == 1 )
+                    freeAround[3] = true;
+                else
+                    freeAround[3] = false;
+            }
+        }
+        else if(currentX == goalX){
+            if(currentY < goalY ){
+                if(level.getCell(currentX - 1, currentY - 1) == 0 || level.getCell(currentX - 1, currentY - 1) == 1 )
+                    freeAround[0] = true;
+                else
+                    freeAround[2] = false;
+                if(level.getCell(currentX + 1, currentY - 1) == 0 || level.getCell(currentX + 1, currentY - 1) == 1 )
+                    freeAround[1] = true;
+                else
+                    freeAround[1] = false;
+            }
         }
 
 
@@ -379,41 +405,6 @@ public class Player extends Sprite {
     }
 
     public void update(int x, int y, String enemy) {
-        if(enemy.equalsIgnoreCase("nemico"))
-            this.nMorti++;
-        System.out.println(nMorti);
-        switch (nLevel) {
-            case 1:
-                if (nMorti == 2) {
-                    enemyX = 1000;
-                    enemyY = 1000;
-                    nMorti = 0;
-                }
-                System.out.println("DOPO IL SET SONO"+ enemyX+enemyY);
-                break;
-            case 2:
-                if (nMorti == 3) {
-                    enemyX = 1000;
-                    enemyY = 1000;
-                    nMorti = 0;
-                }
-                break;
-            case 3:
-                if (nMorti == 4) {
-                    enemyX = 1000;
-                    enemyY = 1000;
-                    nMorti = 0;
-                }
-                break;
-            case 4:
-
-                if (nMorti == 4) {
-                    enemyX = 1000;
-                    enemyY = 1000;
-                    nMorti = 0;
-                }
-                break;
-        }
         if(this.enemy != null) {
             double enemyDist = sqrt(pow((playerX - enemyX), 2) + pow((playerY - enemyY), 2));
             if (!this.enemy.equalsIgnoreCase(enemy) &&
@@ -478,7 +469,7 @@ public class Player extends Sprite {
                     currentGoalY = 1;
                 }
                 if(enemyDist < 7 && !enemyClean){
-                    if(enemyDist <= bombRange)
+                    if(enemyDist <= bombRange && sqrt(pow((playerX - goalX), 2)+pow((playerY - goalY), 2)) > 2)
                         mode = 2;
 
                 }
@@ -511,6 +502,7 @@ public class Player extends Sprite {
             ArrayList<Action> actions = new ArrayList<>();
             ArrayList<Wall> walls = new ArrayList<>();
             ArrayList<EnemyPath> enemyPaths = new ArrayList<>();
+            ArrayList<Around> around = new ArrayList<>();
 
             playerX = this.x/40;
             playerY = this.y/40;
@@ -528,10 +520,17 @@ public class Player extends Sprite {
                 }
                 else
                     walls.add(new Wall(i, 3));
+                if(freeAround[i])
+                    around.add(new Around(i, 0));
+                else
+                    around.add(new Around(i, 2));
+
                 if ( !enemyFree[i] && enemyDist > bombRange)
                     enemyPaths.add(new EnemyPath(i, 1));
-                if( !enemyFree[i] && enemyDist <= bombRange + 1 )
+                if( !enemyFree[i] && enemyDist <= bombRange || (bombRange == 1 && enemyDist <= 2))
                     enemyPaths.add(new EnemyPath(i, 2));
+                else if (enemyDist <= bombRange)
+                    enemyPaths.add(new EnemyPath(i, 1));
                 else if(enemyFree[i])
                     enemyPaths.add(new EnemyPath(i, 0));
             }
@@ -545,6 +544,7 @@ public class Player extends Sprite {
                             makeBombDistances(buildDistances(bombX, bombY)),
                             makeEnemyDistances(buildDistances(enemyX, enemyY)),
                             walls,
+                            around,
                             enemyPaths,
                             new Mode(mode)
             );

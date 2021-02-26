@@ -3,7 +3,7 @@ package com.mygdx.game.ai;
 import it.unical.mat.embasp.languages.Id;
 import it.unical.mat.embasp.languages.Param;
 
-@Id("wall")
+@Id("around")
 public class Around{
 
     @Param(0)
